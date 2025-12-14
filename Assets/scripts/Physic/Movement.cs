@@ -35,12 +35,8 @@ namespace Physic {
             _rigid.linearVelocity = velocity;
         }
         
-        private bool IsGround(out float pLength) {
+        private bool IsGround(float pGravity, out float pLength) {
             pLength = 0;
-            
-            var velocity = _rigid.linearVelocity.y;
-            if(_isGround && velocity == 0)
-                return true;
             
             var halfScale = transform.localScale/ 2f;
             var center = transform.position;
@@ -53,7 +49,7 @@ namespace Physic {
                 halfScale,
                 Vector3.down,
                 Quaternion.identity,
-                -velocity * Time.timeScale * Time.deltaTime + transform.localScale.y,
+                -pGravity * Time.timeScale * Time.deltaTime + transform.localScale.y,
                 LayerMask.GetMask("Ground")
             );
             if (contacts.Length == 0)
@@ -66,11 +62,11 @@ namespace Physic {
         private void GravityProcess() {
             var velocity = _rigid.linearVelocity;
 
-            _isGround = IsGround(out var length);
             if(velocity.y <= 0 && _slowFalling)
                 velocity.y += GRAVITY_SCALE * Time.deltaTime * _slowFallingPower;
             else 
                 velocity.y += GRAVITY_SCALE * Time.deltaTime;
+            _isGround = IsGround(velocity.y, out var length);
             
             if (_isGround) {
                 velocity.y = 0;
@@ -97,7 +93,7 @@ namespace Physic {
                     SetActiveSlowFalling(true);
             }
         }
-/*
+/*It shows box which checking if player has contacted ground
 #if UNITY_EDITOR
         private void OnDrawGizmos() {
             var scale = transform.localScale;
