@@ -18,8 +18,9 @@ namespace Physic {
         private bool _slowFalling = false;
         private float _slowFallingPower = 0.5f;
         
-       //==================================================||Properties 
+        //==================================================||Properties 
         public bool IsGround { get; private set; } = false;
+        public bool SeeRight { get; private set; } = false;
         
         //==================================================||Methods 
         public void SetActiveSlowFalling(bool pOn, float pPower = 0.3f) {
@@ -28,7 +29,7 @@ namespace Physic {
         }
         
         public void Move(Vector3 pDir, float pSpeed = 1) =>
-           _rigid.linearVelocity += pDir.normalized * pSpeed;
+            _rigid.linearVelocity += pDir.normalized * pSpeed;
         
         public void Jump() {
             var velocity = _rigid.linearVelocity;
@@ -38,6 +39,8 @@ namespace Physic {
 
         public void SetHorizonPower(float pPower = 1) {
             var velocity = _rigid.linearVelocity;
+            if(pPower != 0)
+                SeeRight = pPower > 0;
             velocity.x = pPower;
             _rigid.linearVelocity = velocity;
         }
@@ -49,7 +52,9 @@ namespace Physic {
             
             var nextPos = transform.position + velocity * Time.deltaTime;
             var adjust = Mathf.Sign(velocity.x) * transform.localScale.x;
-            return CheckGround(nextPos + adjust * Vector3.right, velocity.y + GRAVITY_SCALE, out _);      
+            var existOther = Physics.OverlapBox(nextPos, transform.localScale / 2, Quaternion.identity)
+                .Any(collider => collider.gameObject.CompareTag("Enemy") && collider.gameObject != gameObject);
+            return !existOther && CheckGround(nextPos + adjust * Vector3.right, velocity.y + GRAVITY_SCALE, out _);      
         }
         
         private bool CheckGround(Vector4 pPos, float pGravity, out float pLength) {

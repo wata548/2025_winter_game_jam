@@ -15,3 +15,5 @@ MonoBehaviour:
   _nextState: 01000000
   _minIdleTime: 1
   _maxIdleTime: 1.5
+  _finder: {fileID: 11400000, guid: e037f95617131204c86da18a909c4600, type: 2}
+  _whenFindState: 2

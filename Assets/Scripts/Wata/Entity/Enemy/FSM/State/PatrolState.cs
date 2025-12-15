@@ -12,6 +12,10 @@ namespace Entity.Enemy.FSM {
         private float _remainDistance;
         private bool _isSetted = false;
         
+        [Space, Header("Finder")]
+        [SerializeField] private FinderBase _finder;
+        [SerializeField] private EnemyState _whenFindState;
+        
        //==================================================||Methods 
        public void SetUp(NonTargetFSM pTarget) {
 
@@ -46,6 +50,13 @@ namespace Entity.Enemy.FSM {
         }
 
         public override void OnUpdate(NonTargetFSM pTarget) {
+            
+            if (pTarget is TargetFSM targetFsm && _finder.FindPlayer(targetFsm, out var player)) {
+                targetFsm.Target = player.gameObject;
+                pTarget.Movement.SetHorizonPower(0);
+                pTarget.ChangeState(_whenFindState);
+                return;
+            }
             
             SetUp(pTarget);
             if (!_isSetted) 

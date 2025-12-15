@@ -7,6 +7,10 @@ namespace Entity.Enemy.FSM {
         //==================================================||Fields 
         [SerializeField] private float _minIdleTime;
         [SerializeField] private float _maxIdleTime;
+        
+        [Space, Header("Finder")]
+        [SerializeField] private FinderBase _finder;
+        [SerializeField] private EnemyState _whenFindState;
         private float _remainTime;
         
         //==================================================||Methods 
@@ -19,9 +23,16 @@ namespace Entity.Enemy.FSM {
 
         public override void OnUpdate(NonTargetFSM pTarget) {
             _remainTime -= Time.deltaTime;
+            
+            if (pTarget is TargetFSM targetFsm && _finder.FindPlayer(targetFsm, out var player)) {
+                targetFsm.Target = player.gameObject;
+                pTarget.ChangeState(_whenFindState);
+                return;
+            }
+            
             if (_remainTime > 0)
                 return;
-
+            
             ChangeState(pTarget);
         }
     }

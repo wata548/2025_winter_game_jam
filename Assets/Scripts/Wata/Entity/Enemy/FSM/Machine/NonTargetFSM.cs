@@ -13,6 +13,7 @@ namespace Entity.Enemy.FSM {
        
         //==================================================||Properties 
         [Header("Fsm")] 
+        
         [SerializeField] private List<StatePair> _stateList;
         [field: SerializeField] public EnemyState State { get; private set; } = default;
         public Enemy Enemy { get; private set; }

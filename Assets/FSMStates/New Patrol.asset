@@ -15,3 +15,5 @@ MonoBehaviour:
   _nextState: 00000000
   _minLength: 5
   _maxLength: 7
+  _finder: {fileID: 11400000, guid: e037f95617131204c86da18a909c4600, type: 2}
+  _whenFindState: 2
