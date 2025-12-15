@@ -15,6 +15,6 @@ namespace Entity.Enemy.FSM {
         public override void OnExit(NonTargetFSM pTarget) =>
             Debug.Log($"Exit {pTarget.State}state");
 
-        public override void Update(NonTargetFSM pTarget) { }
+        public override void OnUpdate(NonTargetFSM pTarget) { }
     }
 }

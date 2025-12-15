@@ -15,9 +15,11 @@ namespace Physic {
 
         //==================================================||Fields 
         private Rigidbody _rigid = null;
-        private bool _isGround = false;
         private bool _slowFalling = false;
         private float _slowFallingPower = 0.5f;
+        
+       //==================================================||Properties 
+        public bool IsGround { get; private set; } = false;
         
         //==================================================||Methods 
         public void SetActiveSlowFalling(bool pOn, float pPower = 0.3f) {
@@ -25,17 +27,36 @@ namespace Physic {
             _slowFalling = pOn;
         }
         
+        public void Move(Vector3 pDir, float pSpeed = 1) =>
+           _rigid.linearVelocity += pDir.normalized * pSpeed;
+        
         public void Jump() {
             var velocity = _rigid.linearVelocity;
             velocity.y += JUMP_SCALE;
             _rigid.linearVelocity = velocity;
         }
+
+        public void SetHorizonPower(float pPower = 1) {
+            var velocity = _rigid.linearVelocity;
+            velocity.x = pPower;
+            _rigid.linearVelocity = velocity;
+        }
+
+        public bool IsMovable(Vector3 pDir) {
+            var velocity = _rigid.linearVelocity + pDir;
+            if (velocity.x == 0)
+                return true;
+            
+            var nextPos = transform.position + velocity * Time.deltaTime;
+            var adjust = Mathf.Sign(velocity.x) * transform.localScale.x;
+            return CheckGround(nextPos + adjust * Vector3.right, velocity.y + GRAVITY_SCALE, out _);      
+        }
         
-        private bool IsGround(float pGravity, out float pLength) {
+        private bool CheckGround(Vector4 pPos, float pGravity, out float pLength) {
             pLength = 0;
             
             var halfScale = transform.localScale/ 2f;
-            var center = transform.position;
+            var center = pPos;
             center.y += halfScale.y;
             halfScale *= GROUND_CHECK_OFFSET;
             halfScale.y = GROUND_CHECKER_HEIGHT / 2;
@@ -62,9 +83,9 @@ namespace Physic {
                 velocity.y += GRAVITY_SCALE * Time.deltaTime * _slowFallingPower;
             else 
                 velocity.y += GRAVITY_SCALE * Time.deltaTime;
-            _isGround = IsGround(velocity.y, out var length);
+            IsGround = CheckGround(transform.position, velocity.y, out var length);
             
-            if (_isGround) {
+            if (IsGround) {
                 velocity.y = 0;
                 var pos = transform.position;
                 pos.y -= length;

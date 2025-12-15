@@ -2,11 +2,11 @@
 using Entity.Enemy.FSM;
 using Physic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Entity.Enemy {
     [RequireComponent(typeof(Movement))]
-    public abstract class Enemy: MonoBehaviour, IEntity {
-        
+    public class Enemy: MonoBehaviour, IEntity {
         
         //==================================================||Properties 
         [field: SerializeField] public float Speed { get; private set; }
@@ -14,6 +14,7 @@ namespace Entity.Enemy {
         public int Hp { get; private set; }
         public bool IsDead { get; private set; } = false;
 
+        public Movement Movement { get; private set; } = null;
         //==================================================||Methods 
         public void GetDamage(int pAmount) {
             Hp -= pAmount;
@@ -42,20 +43,10 @@ namespace Entity.Enemy {
             Debug.Log($"{name} is dead.");
             Destroy(gameObject);
         }
-
-        public void Move(Vector3 pDir) {
-            var dir = pDir.normalized;
-            //var velo = _rigid
-        }
-
-        //==================================================||Unity
-        private void Awake() {
+        
+        public void SetUp() {
             Hp = MaxHp;
-        }
-
-        private void Update() {
-            if (IsDead)
-                return;
+            Movement = GetComponent<Movement>();
         }
     }
 }
