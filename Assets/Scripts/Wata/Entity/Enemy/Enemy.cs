@@ -43,6 +43,11 @@ namespace Entity.Enemy {
             Destroy(gameObject);
         }
 
+        public void Move(Vector3 pDir) {
+            var dir = pDir.normalized;
+            //var velo = _rigid
+        }
+
         //==================================================||Unity
         private void Awake() {
             Hp = MaxHp;

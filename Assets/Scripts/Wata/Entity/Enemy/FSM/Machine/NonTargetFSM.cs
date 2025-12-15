@@ -8,11 +8,13 @@ namespace Entity.Enemy.FSM {
     public class NonTargetFSM: MonoBehaviour {
         //==================================================||Fields 
         private IReadOnlyDictionary<EnemyState, StateBase> _stateMap;
-        private StateBase _curState = null;
+        private StateBase _logic = null;
        
         //==================================================||Properties 
         [Header("Fsm")] 
         [SerializeField] private List<StatePair> _stateList;
+        public EnemyState State { get; private set; } = default;
+        public Enemy Enemy { get; private set; }
 
         //==================================================||Methods 
         public void ChangeState(EnemyState pTargetState) {
@@ -21,19 +23,24 @@ namespace Entity.Enemy.FSM {
                 Debug.LogError($"{name} doesn't have {pTargetState} state");
                 return;
             }
+
+            if (_logic != null && State == pTargetState)
+                return;
             
-            _curState?.OnExit(this);
-            _curState = _stateMap[pTargetState];
-            _curState.OnEnter(this);
+            _logic?.OnExit(this);
+            State = pTargetState;
+            _logic = _stateMap[pTargetState];
+            _logic.OnEnter(this);
         }
 
         //==================================================||Unity        
         protected virtual void Awake() {
             _stateMap = _stateList.ToDictionary(pair => pair.State, pair => pair.StateLogic);
+            Enemy = GetComponent<Enemy>();
         }
 
         protected virtual void Update() {
-            _curState?.Update(this);
+            _logic?.Update(this);
         }
     }
 }

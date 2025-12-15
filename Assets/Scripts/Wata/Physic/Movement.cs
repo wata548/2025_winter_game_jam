@@ -1,9 +1,5 @@
-﻿using System;
-using System.Linq;
-using UnityEditor.Searcher;
+﻿using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
 
 namespace Physic {
     [RequireComponent(typeof(Rigidbody))]
@@ -86,12 +82,6 @@ namespace Physic {
 
         private void Update() {
             GravityProcess();
-            if (Input.GetKeyDown(KeyCode.Space)) {
-                if (_isGround)
-                    Jump();
-                else
-                    SetActiveSlowFalling(true);
-            }
         }
 /*It shows box which checking if player has contacted ground
 #if UNITY_EDITOR
