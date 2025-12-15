@@ -9,7 +9,6 @@ namespace Entity.Enemy.FSM {
             var target = pFsm.Target;
             foreach (var targetFsm in pTargetFsms) {
                 targetFsm.Target = target;
-                targetFsm.Movement.SetHorizonPower(0);
                 targetFsm.ChangeState(EnemyState.Chase);
             }
         }

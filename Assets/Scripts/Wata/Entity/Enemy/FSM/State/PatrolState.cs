@@ -53,7 +53,6 @@ namespace Entity.Enemy.FSM {
             
             if (pTarget is TargetFSM targetFsm && _finder.FindPlayer(targetFsm, out var player)) {
                 targetFsm.Target = player.gameObject;
-                pTarget.Movement.SetHorizonPower(0);
                 pTarget.ChangeState(_whenFindState);
                 return;
             }
@@ -65,13 +64,11 @@ namespace Entity.Enemy.FSM {
             _remainDistance -= Time.deltaTime * pTarget.Enemy.Speed;
             
             if (_remainDistance <= 0) {
-                pTarget.Movement.SetHorizonPower(0);
                 ChangeState(pTarget);
                 return;
             }
 
             if (!pTarget.Movement.IsMovable(Vector3.zero)) {
-                pTarget.Movement.SetHorizonPower(0);
                 ChangeState(pTarget);
             }
         }

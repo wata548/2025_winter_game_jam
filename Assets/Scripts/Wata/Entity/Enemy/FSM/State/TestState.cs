@@ -4,10 +4,6 @@ namespace Entity.Enemy.FSM {
     [CreateAssetMenu(menuName = "EnemyFSM/Test")]
     public class TestState: StateBase {
 
-        //==================================================||Fields 
-        [SerializeField] private float _minIdleTime;
-        [SerializeField] private float _maxIdleTime;
-        
         //==================================================||Methods 
         public override void OnEnter(NonTargetFSM pTarget) =>
             Debug.Log($"Enter {pTarget.State}state");

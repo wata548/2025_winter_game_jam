@@ -27,6 +27,8 @@ namespace Entity.Enemy.FSM {
                 return;
             }
 
+            Movement.SetHorizonPower(0);
+
             _logic?.OnExit(this);
             State = pTargetState;
             _logic = newState;

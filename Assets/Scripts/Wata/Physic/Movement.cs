@@ -21,6 +21,7 @@ namespace Physic {
         //==================================================||Properties 
         public bool IsGround { get; private set; } = false;
         public bool SeeRight { get; private set; } = false;
+        public Vector3 Velocity => _rigid.linearVelocity;
         
         //==================================================||Methods 
         public void SetActiveSlowFalling(bool pOn, float pPower = 0.3f) {
