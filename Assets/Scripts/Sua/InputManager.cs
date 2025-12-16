@@ -10,17 +10,28 @@ namespace Game.Input
         MoveRight,
         Jump,
         Dash,
+        Attack,
+        Skill1,
+        Skill2,
+        Heal,
+        Menu,
     }
 
     public class InputManager : MonoBehaviour
     {
         private static InputManager m_instance = null;
 
-        //==================================================||Basic Input Bindings
+        //==================================================||Input Bindings
         private KeyCode m_moveLeftKey = KeyCode.A;
         private KeyCode m_moveRightKey = KeyCode.D;
         private KeyCode m_jumpKey = KeyCode.Space;
         private KeyCode m_dashKey = KeyCode.LeftShift;
+        private KeyCode m_attackKey = KeyCode.J;
+        private KeyCode m_skillKey1 = KeyCode.K;
+        private KeyCode m_skillKey2 = KeyCode.L;
+        private KeyCode m_HealKey = KeyCode.H;
+        private KeyCode m_MenuKey = KeyCode.Escape;
+
 
         //==================================================||Singleton
         public static InputManager Instance
@@ -68,6 +79,21 @@ namespace Game.Input
                 case InputAction.Dash:
                     m_dashKey = pKeyCode;
                     break;
+                case InputAction.Attack:
+                    m_attackKey = pKeyCode;
+                    break;
+                case InputAction.Skill1:
+                    m_skillKey1 = pKeyCode;
+                    break;
+                case InputAction.Skill2:
+                    m_skillKey2 = pKeyCode;
+                    break;
+                case InputAction.Heal:
+                    m_HealKey = pKeyCode;
+                    break;
+                case InputAction.Menu:
+                    m_MenuKey = pKeyCode;
+                    break;
             }
         }
 
@@ -79,6 +105,11 @@ namespace Game.Input
                 InputAction.MoveRight => m_moveRightKey,
                 InputAction.Jump => m_jumpKey,
                 InputAction.Dash => m_dashKey,
+                InputAction.Attack => m_attackKey,
+                InputAction.Skill1 => m_skillKey1,
+                InputAction.Skill2 => m_skillKey2,
+                InputAction.Heal => m_HealKey,
+                InputAction.Menu => m_MenuKey,
                 _ => KeyCode.None,
             };
         }
