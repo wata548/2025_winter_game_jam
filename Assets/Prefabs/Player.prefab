@@ -16,6 +16,13 @@ GameObject:
   - component: {fileID: 9084907160901830409}
   - component: {fileID: 1699877827647714756}
   - component: {fileID: 6943666083483649038}
+  - component: {fileID: 6988637069905093596}
+  - component: {fileID: 6152732994409574776}
+  - component: {fileID: 6116447466039421651}
+  - component: {fileID: 2778416206356582153}
+  - component: {fileID: 8200179331768621055}
+  - component: {fileID: 3825862715340786355}
+  - component: {fileID: 2128955395137192839}
   - component: {fileID: 2787236535462166232}
   - component: {fileID: 1706916755540283826}
   - component: {fileID: 1141665437612404023}
@@ -145,6 +152,105 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e853c60310e37f3478e1d01a418a729e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Player.Stats.ThreadSystem
+--- !u!114 &6988637069905093596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6257123280473501605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 235b0405cc9a1c04aa964d1fc23c3d7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Player.Combat.ShellSystem
+--- !u!114 &6152732994409574776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6257123280473501605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb3b01b1ab2f07248bad567923d8f65b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Player.Stats.EnhancementSystem
+--- !u!114 &6116447466039421651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6257123280473501605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 488e9d3e24bac3248b929f200ff429c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Player.Stats.MoltSystem
+--- !u!114 &2778416206356582153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6257123280473501605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6752b638a3e01814c8493288a63bd059, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Player.Combat.KnockbackSystem
+  m_knockbackForce: 10
+  m_knockbackDuration: 0.2
+--- !u!114 &8200179331768621055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6257123280473501605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 673a6742d6b9f244d8b4827cd3a5b13d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Player.Combat.SkillSystem
+  m_shell1SkillCooldown: 5
+  m_shell1SkillMoltCost: 20
+  m_shell1SkillRadius: 5
+  m_shell1PoisonStackAmount: 2
+  m_shell2SkillCooldown: 3
+  m_shell2SkillMoltCost: 15
+  m_shell2MoveSpeedMultiplier: 1.5
+  m_shell2DurationSeconds: 5
+  m_shell3SkillCooldown: 4
+  m_shell3SkillMoltCost: 25
+  m_enemyTag: Enemy
+--- !u!114 &3825862715340786355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6257123280473501605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d1df688f3cce884fbe26b009fed4902, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Player.Stats.PoisonSystem
+  m_poisonTickInterval: 1
+  m_damagePerStack: 1
+--- !u!114 &2128955395137192839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6257123280473501605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2249c8310c2e14848baea38ee0e5a556, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Player.Stats.PlayerBuffSystem
 --- !u!33 &2787236535462166232
 MeshFilter:
   m_ObjectHideFlags: 0

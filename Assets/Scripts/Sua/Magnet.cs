@@ -3,7 +3,7 @@ using System;
 
 namespace Game.Item
 {
-    public class MagnetScript : MonoBehaviour
+    public class Magnet : MonoBehaviour
     {
 
         public event Action<int> OnItemCollected;
