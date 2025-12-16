@@ -9,9 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1bc8d931a10c48828d2c33f3547093a6, type: 3}
-  m_Name: New Test State
-  m_EditorClassIdentifier: Assembly-CSharp::Entity.Enemy.FSM.TestState
-  _nextState: 
-  _minIdleTime: 0
-  _maxIdleTime: 0
+  m_Script: {fileID: 11500000, guid: ddae14fc4a014fe1b2cfa5dfcbce278b, type: 3}
+  m_Name: New Special Attack
+  m_EditorClassIdentifier: Assembly-CSharp::Entity.Enemy.FSM.SpecialAttackState
+  _nextState: 02000000
