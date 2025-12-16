@@ -7,6 +7,7 @@ namespace Game.Player.Stats
 
         private HealthSystem m_healthSystem = null;
         private ThreadSystem m_threadSystem = null;
+        private EnhancementSystem m_enhancementSystem = null;
 
         private bool m_isHealing = false;
         private float m_healTimer = 0f;
@@ -19,6 +20,7 @@ namespace Game.Player.Stats
         {
             m_healthSystem = GetComponent<HealthSystem>();
             m_threadSystem = GetComponent<ThreadSystem>();
+            m_enhancementSystem = GetComponent<EnhancementSystem>();
 
             if (m_healthSystem == null)
             {
@@ -27,6 +29,10 @@ namespace Game.Player.Stats
             if (m_threadSystem == null)
             {
                 Debug.LogError("[HealingSystem] ThreadSystem is missing!");
+            }
+            if (m_enhancementSystem == null)
+            {
+                Debug.LogError("[HealingSystem] EnhancementSystem is missing!");
             }
         }
 
@@ -55,9 +61,10 @@ namespace Game.Player.Stats
         {
             if (!m_isHealing) return;
 
+            float enhancedHealTick = m_healTick * m_enhancementSystem.GetHealingSpeedMultiplier();
             m_healTimer += Time.deltaTime;
 
-            if (m_healTimer >= m_healTick)
+            if (m_healTimer >= enhancedHealTick)
             {
                 if (m_threadSystem.ConsumeThread(m_threadCostPerHeal))
                 {

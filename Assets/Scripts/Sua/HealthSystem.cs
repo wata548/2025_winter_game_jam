@@ -9,9 +9,12 @@ namespace Game.Player.Stats
 
         public event Action<int, int> OnHealthChanged;
         public event Action OnDeath;
+        public event Action<int> OnPoisonStackChanged;
 
         private Game.Player.Stats.PlayerStats m_playerStats = null;
+        private PlayerBuffSystem m_playerBuffSystem = null;
         private int m_currentHealth = 0;
+        private int m_poisonStack = 0;
         private bool m_isInvincible = false;
         private float m_invincibilityTimer = 0f;
 
@@ -20,6 +23,8 @@ namespace Game.Player.Stats
         private void Awake()
         {
             m_playerStats = GetComponent<Game.Player.Stats.PlayerStats>();
+            m_playerBuffSystem = GetComponent<PlayerBuffSystem>();
+
             if (m_playerStats == null)
             {
                 Debug.LogError("[HealthSystem] PlayerStats is missing!");
@@ -45,11 +50,24 @@ namespace Game.Player.Stats
                 return;
             }
 
+            if (m_playerBuffSystem != null && m_playerBuffSystem.CanBlockDamage())
+            {
+                m_playerBuffSystem.OnPlayerHit();
+                SetInvincible(true);
+                Debug.Log("[HealthSystem] Damage blocked by Defense buff!");
+                return;
+            }
+
             m_currentHealth -= pDamage;
             m_currentHealth = Mathf.Max(0, m_currentHealth);
 
             OnHealthChanged?.Invoke(m_currentHealth, m_playerStats.MaxHealth);
             SetInvincible(true);
+
+            if (m_playerBuffSystem != null)
+            {
+                m_playerBuffSystem.OnPlayerHit();
+            }
 
             if (m_currentHealth <= 0)
             {
@@ -92,6 +110,7 @@ namespace Game.Player.Stats
         public int MaxHp => m_playerStats.MaxHealth;
         public int Hp => m_currentHealth;
         public bool IsDead => !IsAlive;
+        public int PoisonStack => m_poisonStack;
 
         public void GetDamage(int pAmount)
         {
@@ -101,6 +120,21 @@ namespace Game.Player.Stats
         public void GetHeal(int pAmount)
         {
             Heal(pAmount);
+        }
+
+        public void AddPoisonStack(int pAmount)
+        {
+            m_poisonStack += pAmount;
+            OnPoisonStackChanged?.Invoke(m_poisonStack);
+            Debug.Log($"[HealthSystem] Poison stack increased to {m_poisonStack}!");
+        }
+
+        public void RemovePoisonStack(int pAmount)
+        {
+            m_poisonStack -= pAmount;
+            m_poisonStack = Mathf.Max(0, m_poisonStack);
+            OnPoisonStackChanged?.Invoke(m_poisonStack);
+            Debug.Log($"[HealthSystem] Poison stack decreased to {m_poisonStack}!");
         }
 
         //==================================================||Properties
