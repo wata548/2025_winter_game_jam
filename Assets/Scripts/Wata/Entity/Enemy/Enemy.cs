@@ -14,6 +14,7 @@ namespace Entity.Enemy {
         [field: SerializeField] public SpecialAttackMotion SpecialAttackMotion { get; private set; }
         public int Hp { get; private set; }
         public bool IsDead { get; private set; } = false;
+        public int PoisonStack { get; private set; }
 
         public Movement Movement { get; private set; } = null;
         //==================================================||Methods 
@@ -33,6 +34,9 @@ namespace Entity.Enemy {
             OnHeal(pAmount);
         }
 
+        public void AddPoisonStack(int pAmount) => PoisonStack += pAmount;
+        public void RemovePoisonStack(int pAmount) => PoisonStack = Mathf.Max(0, PoisonStack - pAmount);
+
         protected virtual void OnDamage(int pAmount) {
             Debug.Log($"{name} is hit({pAmount}).");
         }
@@ -49,5 +53,12 @@ namespace Entity.Enemy {
             Hp = MaxHp;
             Movement = GetComponent<Movement>();
         }
+        
+       //==================================================||Unity
+       private void LateUpdate() {
+           var pos = transform.position;
+           pos.z = 0;
+           transform.position = pos;
+       }
     }
 }
