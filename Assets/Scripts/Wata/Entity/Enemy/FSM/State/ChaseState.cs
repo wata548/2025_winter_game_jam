@@ -7,22 +7,32 @@ namespace Entity.Enemy.FSM {
         [SerializeField] private float _attackableDistance;
         
         public override void OnEnter(NonTargetFSM pTarget) {
-            
+            if (pTarget is not TargetFSM fsm) {
+                Debug.LogError($"{pTarget.gameObject.name} should be Target FSM, this is nontarget FSM");
+                pTarget.ChangeState(EnemyState.Idle);
+                return;
+            }
         }
 
         public override void OnExit(NonTargetFSM pTarget) {
         }
 
         public override void OnUpdate(NonTargetFSM pTarget) {
+            
             if (pTarget is not TargetFSM fsm) {
                 Debug.LogError($"{pTarget.gameObject.name} should be Target FSM, this is nontarget FSM");
                 pTarget.ChangeState(EnemyState.Idle);
                 return;
             }
-            
+
+            if (fsm.UseSpecialAttack()) {
+                pTarget.ChangeState(EnemyState.SpecialAttack);
+                return;
+            }
+
+            var sizeInterval = (fsm.transform.localScale.x + fsm.Target.transform.localScale.x) * 0.5f;
             var dist = fsm.Target.transform.position - fsm.transform.position;
-            if (dist.magnitude <= _attackableDistance) {
-                Debug.Log("Attack");
+            if (dist.magnitude - sizeInterval <= _attackableDistance) {
                 pTarget.ChangeState(EnemyState.Attack);
                 return;
             }

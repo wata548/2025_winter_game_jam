@@ -1,8 +1,7 @@
 ﻿using System;
-using Entity.Enemy.FSM;
+using Entity.Enemy.Behaviour;
 using Physic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Entity.Enemy {
     [RequireComponent(typeof(Movement))]
@@ -11,6 +10,8 @@ namespace Entity.Enemy {
         //==================================================||Properties 
         [field: SerializeField] public float Speed { get; private set; }
         [field: SerializeField] public int MaxHp { get; private set; }
+        [field: SerializeField] public AttackMotion AttackMotion { get; private set; }
+        [field: SerializeField] public SpecialAttackMotion SpecialAttackMotion { get; private set; }
         public int Hp { get; private set; }
         public bool IsDead { get; private set; } = false;
 

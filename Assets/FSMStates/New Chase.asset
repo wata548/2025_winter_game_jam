@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f86976c93e28424ea7234b6eb170e7cb, type: 3}
   m_Name: New Chase
   m_EditorClassIdentifier: Assembly-CSharp::Entity.Enemy.FSM.ChaseState
-  _nextState: 
-  _attackableDistance: 3
+  _nextState: 03000000
+  _attackableDistance: 0.5
