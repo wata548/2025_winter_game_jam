@@ -25,7 +25,7 @@ namespace Game.Player.Combat
         [SerializeField] private float m_aerialAttackRadius = 3f;
         [SerializeField] private int m_aerialBaseDamage = 1;
 
-        [SerializeField] private LayerMask m_enemyLayer;
+        [SerializeField] private string m_enemyTag = "Enemy";
 
         private void Awake()
         {
@@ -113,13 +113,15 @@ namespace Game.Player.Combat
             Collider[] hits = Physics.OverlapBox(
                 attackPos,
                 attackSize / 2f,
-                Quaternion.identity,
-                m_enemyLayer
+                Quaternion.identity
             );
 
             foreach (Collider hit in hits)
             {
-                DealDamage(hit.gameObject, AttackType.Normal);
+                if (hit.CompareTag(m_enemyTag))
+                {
+                    DealDamage(hit.gameObject, AttackType.Normal);
+                }
             }
 
             Debug.Log("[AttackSystem] Normal Attack!");
@@ -132,13 +134,15 @@ namespace Game.Player.Combat
 
             Collider[] hits = Physics.OverlapSphere(
                 attackPos,
-                config.m_radius,
-                m_enemyLayer
+                config.m_radius
             );
 
             foreach (Collider hit in hits)
             {
-                DealDamage(hit.gameObject, AttackType.Aerial);
+                if (hit.CompareTag(m_enemyTag))
+                {
+                    DealDamage(hit.gameObject, AttackType.Aerial);
+                }
             }
 
             Debug.Log("[AttackSystem] Aerial Attack!");

@@ -9,30 +9,34 @@ namespace Game.Player.Movement
         //==================================================||Constants 
         private const float JUMP_PEEK_HEIGHT = 4f;
         private const float JUMP_PEEK_INTERVAL = 0.3f;
-        private const float JUMP_SCALE = 2 * JUMP_PEEK_HEIGHT / JUMP_PEEK_INTERVAL;
-        private const float GRAVITY_SCALE = -JUMP_SCALE / JUMP_PEEK_INTERVAL;
         private const float GROUND_CHECK_OFFSET = 0.95f;
         private const float GROUND_CHECKER_HEIGHT = 0.01f;
 
-        private const float MAX_MOVE_SPEED = 10f;
-        private const float MOVE_ACCELERATION = 25f;
-        private const float MOVE_DECELERATION = 20f;
-        private const float AIR_ACCELERATION = 15f;
-
-        private const float DASH_SPEED = 25f;
-        private const float DASH_DURATION = 0.3f;
-        private const float DASH_COOLDOWN = 0.5f;
-
-        //==================================================||Fields 
+        //==================================================||Fields - Movement
         private Rigidbody m_rigid = null;
         private bool m_isGround = false;
         private bool m_slowFalling = false;
-        private float m_slowFallingPower = 0.5f;
         private float m_currentMoveInput = 0f;
+        private float m_lastMoveDirection = 1f;
+
+        //==================================================||Fields - Jump & Gravity
+        private float m_jumpScale;
+        private float m_gravityScale;
+
+        [SerializeField] private float m_maxMoveSpeed = 10f;
+        [SerializeField] private float m_moveAcceleration = 25f;
+        [SerializeField] private float m_moveDeceleration = 20f;
+        [SerializeField] private float m_airAcceleration = 15f;
+        [SerializeField] private float m_slowFallingPower = 0.5f;
+
+        //==================================================||Fields - Dash
+        [SerializeField] private float m_dashSpeed = 25f;
+        [SerializeField] private float m_dashDuration = 0.3f;
+        [SerializeField] private float m_dashCooldown = 0.5f;
 
         private bool m_isDashing = false;
         private float m_dashTimer = 0f;
-        private float m_dashCooldown = 0f;
+        private float m_dashCooldownTimer = 0f;
         private float m_dashDirection = 1f;
 
         //==================================================||Jump & Gravity 
@@ -45,7 +49,7 @@ namespace Game.Player.Movement
         public void Jump()
         {
             var velocity = m_rigid.linearVelocity;
-            velocity.y += JUMP_SCALE;
+            velocity.y += m_jumpScale;
             m_rigid.linearVelocity = velocity;
         }
 
@@ -79,9 +83,9 @@ namespace Game.Player.Movement
             var velocity = m_rigid.linearVelocity;
 
             if (velocity.y <= 0 && m_slowFalling)
-                velocity.y += GRAVITY_SCALE * Time.deltaTime * m_slowFallingPower;
+                velocity.y += m_gravityScale * Time.deltaTime * m_slowFallingPower;
             else
-                velocity.y += GRAVITY_SCALE * Time.deltaTime;
+                velocity.y += m_gravityScale * Time.deltaTime;
             m_isGround = IsGround(velocity.y, out var length);
 
             if (m_isGround)
@@ -96,22 +100,22 @@ namespace Game.Player.Movement
         }
 
         //==================================================||Movement
-        public void ApplyMovement(float p_direction)
+        public void ApplyMovement(float pDirection)
         {
-            m_currentMoveInput = p_direction;
+            m_currentMoveInput = pDirection;
+            if (Mathf.Abs(pDirection) > 0.01f)
+            {
+                m_lastMoveDirection = Mathf.Sign(pDirection);
+            }
         }
 
         //==================================================||Dash
         public bool TryDash()
         {
-            if (m_isDashing || m_dashCooldown > 0f)
+            if (m_isDashing || m_dashCooldownTimer > 0f)
                 return false;
 
-            float dashDir = Mathf.Abs(m_currentMoveInput) > 0.01f ?
-                            Mathf.Sign(m_currentMoveInput) :
-                            m_dashDirection;
-
-            StartDash(dashDir);
+            StartDash(m_lastMoveDirection);
             return true;
         }
 
@@ -128,38 +132,56 @@ namespace Game.Player.Movement
             {
                 m_dashTimer += Time.deltaTime;
 
-                if (m_dashTimer >= DASH_DURATION)
+                if (m_dashTimer >= m_dashDuration)
                 {
                     m_isDashing = false;
-                    m_dashCooldown = DASH_COOLDOWN;
+                    m_dashCooldownTimer = m_dashCooldown;
                 }
             }
 
-            if (m_dashCooldown > 0f)
+            if (m_dashCooldownTimer > 0f)
             {
-                m_dashCooldown -= Time.deltaTime;
+                m_dashCooldownTimer -= Time.deltaTime;
             }
         }
 
+        //==================================================||Enhancement
+        public void ApplyFallSpeedMultiplier(float pMultiplier)
+        {
+            m_gravityScale = -2 * JUMP_PEEK_HEIGHT / JUMP_PEEK_INTERVAL / JUMP_PEEK_INTERVAL * pMultiplier;
+        }
+
+        public void ApplyJumpStrengthMultiplier(float pMultiplier)
+        {
+            m_jumpScale = 2 * JUMP_PEEK_HEIGHT / JUMP_PEEK_INTERVAL * pMultiplier;
+        }
+
+        public void ApplyMoveSpeedMultiplier(float pMultiplier)
+        {
+            m_maxMoveSpeed = 10f * pMultiplier;
+        }
+
+        //==================================================||Properties
         public bool IsDashing => m_isDashing;
-        public bool CanDash => m_dashCooldown <= 0f && !m_isDashing;
-        public float DashCooldownProgress => 1f - Mathf.Clamp01(m_dashCooldown / DASH_COOLDOWN);
+        public bool CanDash => m_dashCooldownTimer <= 0f && !m_isDashing;
+        public float DashCooldownProgress => 1f - Mathf.Clamp01(m_dashCooldownTimer / m_dashCooldown);
         public bool IsGrounded => m_isGround;
         public float GetCurrentMoveInput() => m_currentMoveInput;
 
+        //==================================================||Movement Process
         private void MoveProcess()
         {
             var velocity = m_rigid.linearVelocity;
 
             if (m_isDashing)
             {
-                velocity.x = m_dashDirection * DASH_SPEED;
+                velocity.x = m_dashDirection * m_dashSpeed;
                 m_rigid.linearVelocity = velocity;
                 return;
             }
 
-            float acceleration = m_isGround ? MOVE_ACCELERATION : AIR_ACCELERATION;
-            float targetSpeed = m_currentMoveInput * MAX_MOVE_SPEED;
+            float acceleration = m_isGround ? m_moveAcceleration : m_airAcceleration;
+            float targetSpeed = m_currentMoveInput * m_maxMoveSpeed;
 
             if (Mathf.Abs(m_currentMoveInput) > 0.01f)
             {
@@ -167,7 +189,7 @@ namespace Game.Player.Movement
             }
             else
             {
-                velocity.x = Mathf.Lerp(velocity.x, 0f, MOVE_DECELERATION * Time.deltaTime);
+                velocity.x = Mathf.Lerp(velocity.x, 0f, m_moveDeceleration * Time.deltaTime);
             }
 
             m_rigid.linearVelocity = velocity;
@@ -182,7 +204,11 @@ namespace Game.Player.Movement
             m_rigid.constraints = RigidbodyConstraints.FreezeRotationX |
                                   RigidbodyConstraints.FreezeRotationY |
                                   RigidbodyConstraints.FreezeRotationZ;
+
+            m_jumpScale = 2 * JUMP_PEEK_HEIGHT / JUMP_PEEK_INTERVAL;
+            m_gravityScale = -m_jumpScale / JUMP_PEEK_INTERVAL;
         }
+
         private void Update()
         {
             UpdateDash();
