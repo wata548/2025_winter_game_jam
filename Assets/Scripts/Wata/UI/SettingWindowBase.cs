@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Wata.UI {
+namespace UI {
     public abstract class SettingWindowBase: MonoBehaviour {
         public abstract void TurnOn(bool pOn);
     }

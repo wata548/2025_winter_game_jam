@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Wata.UI.Sound {
+namespace UI {
 
     public class SoundWnd: SettingWindowBase {
 
