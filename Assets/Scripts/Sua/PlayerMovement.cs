@@ -9,8 +9,9 @@ namespace Game.Player.Movement
         //==================================================||Constants 
         private const float JUMP_PEEK_HEIGHT = 4f;
         private const float JUMP_PEEK_INTERVAL = 0.3f;
-        private const float GROUND_CHECK_OFFSET = 0.95f;
+        private const float GROUND_CHECK_OFFSET = 0.9f;
         private const float GROUND_CHECKER_HEIGHT = 0.01f;
+        private const float WALL_CHECK_OFFSET = 1.1f;
 
         //==================================================||Fields - Movement
         private Rigidbody m_rigid = null;
@@ -53,15 +54,17 @@ namespace Game.Player.Movement
             m_rigid.linearVelocity = velocity;
         }
 
-        private bool IsGround(float pGravity, out float pLength)
-        {
+        private bool IsGround(Vector3 pPos, float pGravity, out float pLength) {
             pLength = 0;
-
-            var halfScale = transform.localScale / 2f;
-            var center = transform.position;
+            if (pGravity > 0)
+                return false;
+            
+            var halfScale = transform.localScale/ 2f;
+            var center = pPos;
             center.y += halfScale.y;
             halfScale *= GROUND_CHECK_OFFSET;
             halfScale.y = GROUND_CHECKER_HEIGHT / 2;
+            center.y -= GROUND_CHECKER_HEIGHT;
 
             var contacts = Physics.BoxCastAll(
                 center,
@@ -70,11 +73,12 @@ namespace Game.Player.Movement
                 Quaternion.identity,
                 -pGravity * Time.timeScale * Time.deltaTime + transform.localScale.y,
                 LayerMask.GetMask("Ground")
-            );
-            if (contacts.Length == 0)
+            ).Where(hit => hit.point.y < pPos.y);
+            
+            if (!contacts.Any())
                 return false;
 
-            pLength = contacts.Min(hit => hit.distance) - transform.localScale.y;
+            pLength = (contacts.Min(hit => hit.distance) - transform.localScale.y);
             return true;
         }
 
@@ -86,16 +90,39 @@ namespace Game.Player.Movement
                 velocity.y += m_gravityScale * Time.deltaTime * m_slowFallingPower;
             else
                 velocity.y += m_gravityScale * Time.deltaTime;
-            m_isGround = IsGround(velocity.y, out var length);
-
+            m_isGround = IsGround(transform.position, velocity.y, out var delta);
+            
             if (m_isGround)
             {
                 velocity.y = 0;
                 var pos = transform.position;
-                pos.y -= length;
+                pos.y -= delta;
                 transform.position = pos;
                 m_slowFalling = false;
             }
+            m_rigid.linearVelocity = velocity;
+        }
+
+        private void OffsetXMovement() {
+            var velocity = m_rigid.linearVelocity;
+            if (velocity.x == 0)
+                return;
+            
+            var halfSize = new Vector3(WALL_CHECK_OFFSET, GROUND_CHECK_OFFSET, transform.localScale.z) / 2;
+            var wall = Physics.OverlapBox(
+                transform.position,
+                halfSize,
+                Quaternion.identity,
+                LayerMask.GetMask("Ground")
+            ).Any(collider => {
+                var interval = collider.transform.position.x - transform.position.x;
+                if (interval == 0)
+                    return false;
+                return Mathf.Sign(velocity.x) == Mathf.Sign(interval);
+            });
+            if (wall)
+                velocity.x = 0;
+
             m_rigid.linearVelocity = velocity;
         }
 
@@ -218,6 +245,7 @@ namespace Game.Player.Movement
         private void FixedUpdate()
         {
             MoveProcess();
+            OffsetXMovement();
         }
 
         /*It shows box which checking if player has contacted ground

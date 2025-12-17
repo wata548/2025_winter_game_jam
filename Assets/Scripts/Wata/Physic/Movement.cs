@@ -58,8 +58,10 @@ namespace Physic {
             return !existOther && CheckGround(nextPos + adjust * Vector3.right, velocity.y + GRAVITY_SCALE, out _);      
         }
         
-        private bool CheckGround(Vector4 pPos, float pGravity, out float pLength) {
+        private bool CheckGround(Vector3 pPos, float pGravity, out float pLength) {
             pLength = 0;
+            if (pGravity > 0)
+                return false;
             
             var halfScale = transform.localScale/ 2f;
             var center = pPos;
@@ -74,10 +76,11 @@ namespace Physic {
                 Quaternion.identity,
                 -pGravity * Time.timeScale * Time.deltaTime + transform.localScale.y,
                 LayerMask.GetMask("Ground")
-            );
-            if (contacts.Length == 0)
-                return false;
+            ).Where(hit => hit.point.y < transform.position.y);
             
+            if (!contacts.Any())
+                return false;
+
             pLength = contacts.Min(hit => hit.distance) - transform.localScale.y;
             return true;
         }
