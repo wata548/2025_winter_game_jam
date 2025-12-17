@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 using Entity;
-using Extension.Test;
 
 namespace Game.Player.Combat
 {
@@ -188,7 +187,9 @@ namespace Game.Player.Combat
 
         private void UpdateSkillCooldowns()
         {
-            foreach (var shellType in m_canUseSkill.Keys)
+            List<ShellType> shellTypes = new List<ShellType>(m_canUseSkill.Keys);
+
+            foreach (var shellType in shellTypes)
             {
                 if (!m_canUseSkill[shellType])
                 {
@@ -211,26 +212,11 @@ namespace Game.Player.Combat
             }
         }
 
-        [TestMethod("Test Execute Shell1 Skill")]
-        private void TestExecuteShellSkill(int i = 1)
+        [ContextMenu("Test Execute Shell1 Skill")]
+        private void TestExecuteShell1Skill()
         {
-            switch (i)
-            {
-                case 1:
-                    TryExecuteSkill(ShellType.Shell1);
-                    break;
-                case 2:
-                    TryExecuteSkill(ShellType.Shell2);
-                    break;
-                case 3:
-                    TryExecuteSkill(ShellType.Shell3);
-                    break;
-                default:
-                    TryExecuteSkill(ShellType.Shell1);
-                    return;
-            }
+            TryExecuteSkill(ShellType.Shell1);
         }
-
 
         public bool CanUseSkill(ShellType pShellType) => m_canUseSkill[pShellType];
         public float GetSkillCooldownProgress(ShellType pShellType)

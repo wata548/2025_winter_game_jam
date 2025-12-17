@@ -22,9 +22,11 @@ namespace Game.Player.Combat
         [SerializeField] private float m_normalAttackRange = 2f;
         [SerializeField] private float m_normalAttackHeight = 1f;
         [SerializeField] private int m_normalBaseDamage = 1;
+        [SerializeField] private float m_normalAttackDuration = 0.1f;
 
         [SerializeField] private float m_aerialAttackRadius = 3f;
         [SerializeField] private int m_aerialBaseDamage = 1;
+        [SerializeField] private float m_aerialAttackDuration = 0.3f;
 
         [SerializeField] private string m_enemyTag = "Enemy";
         [SerializeField] private bool m_showGizmo = true;
@@ -35,6 +37,14 @@ namespace Game.Player.Combat
         private float m_lastAerialAttackRadius = 0f;
         private float m_gizmoDisplayTimer = 0f;
         private const float GIZMO_DISPLAY_DURATION = 0.5f;
+
+        private bool m_normalAttackActive = false;
+        private float m_normalAttackTimer = 0f;
+        private float m_normalAttackDirection = 0f;
+
+        private bool m_aerialAttackActive = false;
+        private float m_aerialAttackTimer = 0f;
+        private HashSet<Collider> m_aerialAttackHitColliders = new HashSet<Collider>();
 
         private void Awake()
         {
@@ -80,6 +90,8 @@ namespace Game.Player.Combat
         private void Update()
         {
             UpdateAttackCooldowns();
+            UpdateNormalAttack();
+            UpdateAerialAttack();
             UpdateGizmoDisplay();
         }
 
@@ -92,7 +104,14 @@ namespace Game.Player.Combat
                 return false;
             }
 
-            PerformAttack(attackType, pDirection);
+            if (attackType == AttackType.Normal)
+            {
+                PerformNormalAttack(pDirection);
+            }
+            else
+            {
+                PerformAerialAttack();
+            }
 
             m_attackCooldownTimers[attackType] = m_attackConfigs[attackType].m_cooldown;
             m_canAttack[attackType] = false;
@@ -101,29 +120,33 @@ namespace Game.Player.Combat
             return true;
         }
 
-        private void PerformAttack(AttackType pAttackType, float pDirection)
-        {
-            if (pAttackType == AttackType.Normal)
-            {
-                PerformNormalAttack(pDirection);
-            }
-            else if (pAttackType == AttackType.Aerial)
-            {
-                PerformAerialAttack();
-            }
-        }
-
+        //==================================================||Normal Attack
         private void PerformNormalAttack(float pDirection)
         {
+            m_normalAttackActive = true;
+            m_normalAttackTimer = m_normalAttackDuration;
+            m_normalAttackDirection = Mathf.Abs(pDirection) > 0.01f ? pDirection : m_playerMovement.GetCurrentMoveInput();
+            m_gizmoDisplayTimer = GIZMO_DISPLAY_DURATION;
+
+            Debug.Log("[AttackSystem] Normal Attack!");
+        }
+
+        private void UpdateNormalAttack()
+        {
+            if (!m_normalAttackActive) return;
+
+            m_normalAttackTimer -= Time.deltaTime;
+
+            // 위치추적
             AttackConfig config = m_attackConfigs[AttackType.Normal];
-            Vector3 attackDirection = pDirection > 0 ? Vector3.right : Vector3.left;
+            Vector3 attackDirection = m_normalAttackDirection > 0 ? Vector3.right : Vector3.left;
             Vector3 attackPos = transform.position + attackDirection * (config.m_range / 2f);
             Vector3 attackSize = new Vector3(config.m_range, config.m_radius, 1f);
 
             m_lastNormalAttackPos = attackPos;
             m_lastNormalAttackSize = attackSize;
-            m_gizmoDisplayTimer = GIZMO_DISPLAY_DURATION;
 
+            // Hit check
             Collider[] hits = Physics.OverlapBox(
                 attackPos,
                 attackSize / 2f,
@@ -138,32 +161,57 @@ namespace Game.Player.Combat
                 }
             }
 
-            Debug.Log("[AttackSystem] Normal Attack!");
+            // end
+            if (m_normalAttackTimer <= 0f)
+            {
+                m_normalAttackActive = false;
+                m_lastNormalAttackSize = Vector3.zero;
+            }
         }
 
+        //==================================================||Aerial Attack
         private void PerformAerialAttack()
         {
-            AttackConfig config = m_attackConfigs[AttackType.Aerial];
-            Vector3 attackPos = transform.position;
-
-            m_lastAerialAttackPos = attackPos;
-            m_lastAerialAttackRadius = config.m_radius;
+            m_aerialAttackActive = true;
+            m_aerialAttackTimer = m_aerialAttackDuration;
+            m_lastAerialAttackRadius = m_attackConfigs[AttackType.Aerial].m_radius;
             m_gizmoDisplayTimer = GIZMO_DISPLAY_DURATION;
+            m_aerialAttackHitColliders.Clear();
 
+            Debug.Log("[AttackSystem] Aerial Attack!");
+        }
+
+        private void UpdateAerialAttack()
+        {
+            if (!m_aerialAttackActive) return;
+
+            m_aerialAttackTimer -= Time.deltaTime;
+
+            // 위치추적
+            m_lastAerialAttackPos = transform.position;
+
+            // Hit check
+            AttackConfig config = m_attackConfigs[AttackType.Aerial];
             Collider[] hits = Physics.OverlapSphere(
-                attackPos,
+                m_lastAerialAttackPos,
                 config.m_radius
             );
 
             foreach (Collider hit in hits)
             {
-                if (hit.CompareTag(m_enemyTag))
+                if (hit.CompareTag(m_enemyTag) && !m_aerialAttackHitColliders.Contains(hit))
                 {
+                    m_aerialAttackHitColliders.Add(hit);
                     DealDamage(hit.gameObject, AttackType.Aerial);
                 }
             }
 
-            Debug.Log("[AttackSystem] Aerial Attack!");
+            // end
+            if (m_aerialAttackTimer <= 0f)
+            {
+                m_aerialAttackActive = false;
+                m_aerialAttackHitColliders.Clear();
+            }
         }
 
         private void DealDamage(GameObject pTarget, AttackType pAttackType)
@@ -218,8 +266,8 @@ namespace Game.Player.Combat
         {
             if (!m_showGizmo || m_gizmoDisplayTimer <= 0f) return;
 
-            // Normal Attack (Box)
-            if (m_lastNormalAttackSize.magnitude > 0)
+            // Normal 말이 안 된다는 뜻
+            if (m_normalAttackActive && m_lastNormalAttackSize.magnitude > 0)
             {
                 Gizmos.color = Color.red;
                 Gizmos.DrawWireCube(m_lastNormalAttackPos, m_lastNormalAttackSize);
@@ -227,8 +275,8 @@ namespace Game.Player.Combat
                 Gizmos.DrawCube(m_lastNormalAttackPos, m_lastNormalAttackSize);
             }
 
-            // Aerial Attack (Vertical Circle)
-            if (m_lastAerialAttackRadius > 0)
+            // 공중
+            if (m_aerialAttackActive && m_lastAerialAttackRadius > 0)
             {
                 Gizmos.color = Color.blue;
                 DrawVerticalWireCircle(m_lastAerialAttackPos, m_lastAerialAttackRadius);

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UInput = UnityEngine.Input;
 using Game.Input;
 using Game.Player.Movement;
 using Game.Player.Combat;
@@ -74,7 +73,7 @@ namespace Game.Player
 
         private void HandleAttackInput()
         {
-            if (UInput.GetKeyDown(KeyCode.E))
+            if (InputManager.Instance.GetActionDown(InputAction.Attack))
             {
                 float moveInput = InputManager.Instance.GetMoveInput();
                 m_attackSystem.TryAttack(moveInput);
@@ -83,11 +82,11 @@ namespace Game.Player
 
         private void HandleHealingInput()
         {
-            if (UInput.GetKey(KeyCode.H))
+            if (InputManager.Instance.GetAction(InputAction.Heal))
             {
                 m_healingSystem.StartHealing();
             }
-            if (UInput.GetKeyUp(KeyCode.H))
+            if (InputManager.Instance.GetActionUp(InputAction.Heal))
             {
                 m_healingSystem.StopHealing();
             }
