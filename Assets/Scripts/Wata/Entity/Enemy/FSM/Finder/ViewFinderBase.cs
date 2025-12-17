@@ -9,9 +9,10 @@ namespace Entity.Enemy.FSM {
         [SerializeField] private float _maxDistance;
         public override bool FindPlayer(TargetFSM pFsm, out Transform pPlayer) {
             var direction = pFsm.Movement.SeeRight ? 1 : -1;
-            var scale = pFsm.transform.localScale;
+            var scale = pFsm.Movement.Collider.bounds.size;
             
-            var start = pFsm.transform.position + direction * Vector3.right * scale.x / 2;
+            var start = pFsm.Movement.Collider.bounds.center 
+                        + Vector3.right * (direction * scale.x / 2);
             var player = Physics.RaycastAll(
                     start,
                     Vector3.right * direction,

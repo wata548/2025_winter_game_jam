@@ -10,27 +10,27 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: dcc9036e1340898439de71825392158d, type: 3}
       propertyPath: m_LocalScale.x
-      value: 3
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dcc9036e1340898439de71825392158d, type: 3}
       propertyPath: m_LocalScale.y
-      value: 3
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dcc9036e1340898439de71825392158d, type: 3}
       propertyPath: m_LocalScale.z
-      value: 3
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dcc9036e1340898439de71825392158d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4
+      value: 17.162458
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dcc9036e1340898439de71825392158d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.6
+      value: -11.730364
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dcc9036e1340898439de71825392158d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 9.300001
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dcc9036e1340898439de71825392158d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -149,7 +149,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2235857665514388830}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 100
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -210,7 +210,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Entity.Enemy.FSM.TargetFSM
   _stateList:
   - <State>k__BackingField: 2
-    <StateLogic>k__BackingField: {fileID: 11400000, guid: fe15b752a81944749a1c2185eaca8061, type: 2}
+    <StateLogic>k__BackingField: {fileID: 11400000, guid: fc8af510d9761ca4b903a0eae8bf4d70, type: 2}
   - <State>k__BackingField: 0
     <StateLogic>k__BackingField: {fileID: 11400000, guid: 9e3eca031fb43bb40bd3598eb1cf2396, type: 2}
   - <State>k__BackingField: 1

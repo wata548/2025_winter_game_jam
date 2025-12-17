@@ -1,8 +1,9 @@
 ﻿using System.Linq;
 using UnityEngine;
 
-namespace Entity.Enemy.FSM {
-    [CreateAssetMenu(menuName = "EnemyFSM/Chase")]
+namespace Entity.Enemy.FSM.BlueBelt {
+    
+    [CreateAssetMenu(menuName = "EnemyFSM/BlueBeltChase")]
     public class ChaseState: StateBase {
         [SerializeField] private float _attackableDistance;
         
@@ -39,16 +40,6 @@ namespace Entity.Enemy.FSM {
                 return;
             }
             
-            var length = fsm.Enemy.Speed * Time.deltaTime;
-            var movable = !Physics.BoxCastAll(
-                bounds.center,
-                bounds.size * 0.49f,
-                Mathf.Sign(dist.x) * Vector3.right,
-                Quaternion.identity,
-                length
-            ).Any(hit => hit.transform != fsm.transform);
-
-            pTarget.Movement.SetHorizonPower(movable ? fsm.Enemy.Speed * Mathf.Sign(dist.x) : 0);
         }
     }
 }

@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using Entity.Enemy.FSM;
-using Extension.Test;
-using Physic;
-using Unity.VisualScripting;
+﻿using Entity.Enemy.FSM;
 using UnityEngine;
 
 namespace Entity.Enemy.Behaviour.BlueBelt {
@@ -23,7 +19,7 @@ namespace Entity.Enemy.Behaviour.BlueBelt {
             });
             var spinAnimation = Wait.ForAnimation(_animator, "Spin", () => {
                 fsm.Movement.SetHorizonPower(0);
-                fsm.Movement.Jump(1.3f);
+                fsm.Movement.Jump();
                 _animator.Play("Jump", 0, 0);
                 StartCoroutine(wait);
             });

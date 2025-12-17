@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Extension.Test;
 using UnityEngine;
 
 namespace Physic {
@@ -21,6 +22,7 @@ namespace Physic {
         //==================================================||Properties 
         public bool IsGround { get; private set; } = false;
         public bool SeeRight { get; private set; } = false;
+        public Collider Collider { get; private set; }
         public Vector3 Velocity => _rigid.linearVelocity;
         
         //==================================================||Methods 
@@ -42,6 +44,10 @@ namespace Physic {
             var velocity = _rigid.linearVelocity;
             if(pPower != 0)
                 SeeRight = pPower > 0;
+            var rotation = transform.rotation.eulerAngles;
+            rotation.y = SeeRight ? 90 : -90;
+            transform.rotation = Quaternion.Euler(rotation);
+            
             velocity.x = pPower;
             _rigid.linearVelocity = velocity;
         }
@@ -50,10 +56,11 @@ namespace Physic {
             var velocity = _rigid.linearVelocity + pDir;
             if (velocity.x == 0)
                 return true;
-            
-            var nextPos = transform.position + velocity * Time.deltaTime;
-            var adjust = Mathf.Sign(velocity.x) * transform.localScale.x;
-            var existOther = Physics.OverlapBox(nextPos, transform.localScale / 2, Quaternion.identity)
+
+            var scale = Collider.bounds.size;
+            var nextPos = Collider.bounds.center + velocity * Time.deltaTime;
+            var adjust = Mathf.Sign(velocity.x) * scale.x;
+            var existOther = Physics.OverlapBox(nextPos, scale / 2, Quaternion.identity)
                 .Any(collider => collider.gameObject.CompareTag("Enemy") && collider.gameObject != gameObject);
             return !existOther && CheckGround(nextPos + adjust * Vector3.right, velocity.y + GRAVITY_SCALE, out _);      
         }
@@ -62,8 +69,9 @@ namespace Physic {
             pLength = 0;
             if (pGravity > 0)
                 return false;
-            
-            var halfScale = transform.localScale/ 2f;
+
+            var scale = Collider.bounds.size;
+            var halfScale = scale/ 2f;
             var center = pPos;
             center.y += halfScale.y;
             halfScale *= GROUND_CHECK_OFFSET;
@@ -74,14 +82,14 @@ namespace Physic {
                 halfScale,
                 Vector3.down,
                 Quaternion.identity,
-                -pGravity * Time.timeScale * Time.deltaTime + transform.localScale.y,
+                -pGravity * Time.timeScale * Time.deltaTime + scale.y,
                 LayerMask.GetMask("Ground")
             ).Where(hit => hit.point.y < transform.position.y);
             
             if (!contacts.Any())
                 return false;
 
-            pLength = contacts.Min(hit => hit.distance) - transform.localScale.y;
+            pLength = contacts.Min(hit => hit.distance) - scale.y;
             return true;
         }
 
@@ -92,8 +100,7 @@ namespace Physic {
                 velocity.y += GRAVITY_SCALE * Time.deltaTime * _slowFallingPower;
             else 
                 velocity.y += GRAVITY_SCALE * Time.deltaTime;
-            IsGround = CheckGround(transform.position, velocity.y, out var length);
-            
+            IsGround = CheckGround(Collider.bounds.center, velocity.y, out var length);
             if (IsGround) {
                 velocity.y = 0;
                 var pos = transform.position;
@@ -105,7 +112,8 @@ namespace Physic {
         }
         //==================================================||Unity
         protected virtual void Awake() {
-        
+
+            Collider = GetComponent<Collider>();
             _rigid = GetComponent<Rigidbody>();
             _rigid.useGravity = false;
         }
@@ -113,6 +121,7 @@ namespace Physic {
         protected virtual void Update() {
             GravityProcess();
         }
+
 /*It shows box which checking if player has contacted ground
 #if UNITY_EDITOR
         private void OnDrawGizmos() {
