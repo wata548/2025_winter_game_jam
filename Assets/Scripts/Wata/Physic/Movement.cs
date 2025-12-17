@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Extension.Test;
 using UnityEngine;
 
@@ -18,6 +19,7 @@ namespace Physic {
         protected Rigidbody _rigid = null;
         private bool _slowFalling = false;
         private float _slowFallingPower = 0.5f;
+        private Vector3 _stopForce;
         
         //==================================================||Properties 
         public bool IsGround { get; private set; } = false;
@@ -122,7 +124,16 @@ namespace Physic {
             GravityProcess();
         }
 
-/*It shows box which checking if player has contacted ground
+        private void OnEnable() {
+            _rigid.linearVelocity = _stopForce;
+        }
+
+        private void OnDisable() {
+            _stopForce = _rigid.linearVelocity;
+            _rigid.linearVelocity = Vector3.zero;  
+        }
+
+        /*It shows box which checking if player has contacted ground
 #if UNITY_EDITOR
         private void OnDrawGizmos() {
             var scale = transform.localScale;

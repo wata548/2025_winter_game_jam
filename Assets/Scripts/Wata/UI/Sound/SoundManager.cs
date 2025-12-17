@@ -13,10 +13,10 @@ namespace Sound {
         
        //==================================================||Properties 
         public static SoundManager Instance { get; private set; } = null;
-        public float Master { get; set; }
-        public float Bgm { get; set; }
-        public float Effect { get; set; }
-
+        public float Master { get; set; } = 1;
+        public float Bgm { get; set; } = 1;
+        public float Effect { get; set; } = 1;
+ 
         //==================================================||Methods 
         public void PlayEffect(Vector3 pPos, string pClip) {
             AudioSource.PlayClipAtPoint(_audios[pClip], pPos, Effect * Master);
@@ -34,6 +34,8 @@ namespace Sound {
                
             _audios = Resources.LoadAll<AudioClip>("Sounds")
                 .ToDictionary(clip => clip.name, clip => clip);
+            _bgmPlayer = GetComponent<AudioSource>();
+            PlayBackGround("MainBGM");
         }
     }
 }

@@ -20,13 +20,10 @@ namespace Entity.Enemy.Behaviour {
             pAction?.Invoke();
         }
 
-        public static IEnumerator ForAnimation(Animator pAnimator, string pAnimation, Action pAction, Action pOnBegin = null) {
+        public static IEnumerator ForAnimation(Animator pAnimator, Action pAction, Action pOnBegin = null, float pPoint = 1) {
             pOnBegin?.Invoke();
 
-            pAnimator.Play(pAnimation, 0, 0);
-            pAnimator.Update(0);
-
-            while (pAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1) {
+            while (pAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime < pPoint) {
                 yield return null;
             }
             pAction?.Invoke();

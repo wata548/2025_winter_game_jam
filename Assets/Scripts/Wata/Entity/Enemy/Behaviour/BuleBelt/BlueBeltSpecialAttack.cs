@@ -6,6 +6,8 @@ namespace Entity.Enemy.Behaviour.BlueBelt {
         public override bool IsEnd { get; protected set; } = true;
         [SerializeField] private Animator _animator;
         [SerializeField] private float _speed = 15;
+        [SerializeField] private float _wait = 0.8f;
+        [field: SerializeField] public override float Term { get; protected set; } = 7;
         
         public override void Play() {
             IsEnd = false;
@@ -14,13 +16,21 @@ namespace Entity.Enemy.Behaviour.BlueBelt {
             var dir = Mathf.Sign((fsm.Target.GetComponent<Collider>().bounds.center 
                                   - fsm.Movement.Collider.bounds.center).x);
             fsm.Movement.SetHorizonPower(dir * _speed);
-            var interval = Wait.ForAnimation(_animator, "Spin", () => {
-                fsm.Movement.SetHorizonPower(0);
+
+            var wait = Wait.ForSecond(_wait, () => {
+                _animator.Play("Idle", 0, 0);
                 IsEnd = true;
             });
+            var interval = Wait.ForAnimation(_animator, () => {
+                    fsm.Movement.SetHorizonPower(0);
+                    StartCoroutine(wait);
+                }, () => {
+                    _animator.Play("Spin", 0, 0);
+                    _animator.Update(0);
+                }
+            );
             StartCoroutine(interval);
         }
 
-        public override float Term { get; protected set; } = 3;
     }
 }
