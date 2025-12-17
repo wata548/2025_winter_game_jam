@@ -38,7 +38,7 @@ namespace Physic {
             _rigid.linearVelocity = velocity;
         }
 
-        public void SetHorizonPower(float pPower = 1) {
+        public void SetHorizonPower(float pPower) {
             var velocity = _rigid.linearVelocity;
             if(pPower != 0)
                 SeeRight = pPower > 0;

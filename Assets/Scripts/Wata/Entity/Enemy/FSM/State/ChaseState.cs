@@ -38,6 +38,7 @@ namespace Entity.Enemy.FSM {
             }
             
             var length = fsm.Enemy.Speed * Time.deltaTime;
+            
             var movable = !Physics.BoxCastAll(
                 fsm.transform.position,
                 fsm.transform.localScale * 0.49f,

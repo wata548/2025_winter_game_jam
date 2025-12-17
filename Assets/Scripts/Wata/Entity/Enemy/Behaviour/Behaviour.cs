@@ -1,8 +1,10 @@
-﻿using UnityEngine;
+﻿using Extension.Test;
+using UnityEngine;
 
 namespace Entity.Enemy.Behaviour {
     public abstract class Motion: MonoBehaviour {
         public abstract bool IsEnd { get; protected set; }
+        [TestMethod]
         public abstract void Play();
     }
     
