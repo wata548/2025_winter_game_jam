@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using Extension.Test;
 
 namespace Game.Player.Combat
 {
@@ -86,7 +87,7 @@ namespace Game.Player.Combat
             }
         }
 
-        [ContextMenu("Test Unlock All Shells")]
+        [TestMethod("Test Unlock All Shells")]
         private void TestUnlockAllShells()
         {
             UnlockShell(ShellType.Shell1);
@@ -94,13 +95,13 @@ namespace Game.Player.Combat
             UnlockShell(ShellType.Shell3);
         }
 
-        [ContextMenu("Test Equip Shell1")]
+        [TestMethod("Test Equip Shell1")]
         private void TestEquipShell1()
         {
             EquipShell(ShellType.Shell1);
         }
 
-        [ContextMenu("Test Unequip Shell1")]
+        [TestMethod("Test Unequip Shell1")]
         private void TestUnequipShell1()
         {
             UnequipShell(ShellType.Shell1);

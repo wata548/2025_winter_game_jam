@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using Extension.Test;
 
 namespace Game.Player.Stats
 {
@@ -34,13 +35,13 @@ namespace Game.Player.Stats
             return true;
         }
 
-        [ContextMenu("Test Add Molt")]
+        [TestMethod("Test Add Molt")]
         private void TestAddMolt()
         {
             AddMolt(10);
         }
 
-        [ContextMenu("Test Consume Molt")]
+        [TestMethod("Test Consume Molt")]
         private void TestConsumeMolt()
         {
             ConsumeMolt(10);

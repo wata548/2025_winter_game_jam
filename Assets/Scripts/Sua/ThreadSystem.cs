@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using Extension.Test;
 
 namespace Game.Player.Stats
 {
@@ -46,13 +47,13 @@ namespace Game.Player.Stats
             return true;
         }
 
-        [ContextMenu("Test Add Thread")]
+        [TestMethod("Test Add Thread")]
         private void TestAddThread()
         {
             AddThread(10);
         }
 
-        [ContextMenu("Test Consume Thread")]
+        [TestMethod("Test Consume Thread")]
         private void TestConsumeThread()
         {
             ConsumeThread(10);

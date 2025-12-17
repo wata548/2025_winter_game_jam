@@ -2,6 +2,7 @@ using UnityEngine;
 using UInput = UnityEngine.Input;
 using System.Collections.Generic;
 using System;
+using Extension.Test;
 
 namespace Game.Player.Combat
 {
@@ -26,6 +27,14 @@ namespace Game.Player.Combat
         [SerializeField] private int m_aerialBaseDamage = 1;
 
         [SerializeField] private string m_enemyTag = "Enemy";
+        [SerializeField] private bool m_showGizmo = true;
+
+        private Vector3 m_lastNormalAttackPos = Vector3.zero;
+        private Vector3 m_lastNormalAttackSize = Vector3.zero;
+        private Vector3 m_lastAerialAttackPos = Vector3.zero;
+        private float m_lastAerialAttackRadius = 0f;
+        private float m_gizmoDisplayTimer = 0f;
+        private const float GIZMO_DISPLAY_DURATION = 0.5f;
 
         private void Awake()
         {
@@ -71,6 +80,7 @@ namespace Game.Player.Combat
         private void Update()
         {
             UpdateAttackCooldowns();
+            UpdateGizmoDisplay();
         }
 
         public bool TryAttack(float pDirection)
@@ -110,6 +120,10 @@ namespace Game.Player.Combat
             Vector3 attackPos = transform.position + attackDirection * (config.m_range / 2f);
             Vector3 attackSize = new Vector3(config.m_range, config.m_radius, 1f);
 
+            m_lastNormalAttackPos = attackPos;
+            m_lastNormalAttackSize = attackSize;
+            m_gizmoDisplayTimer = GIZMO_DISPLAY_DURATION;
+
             Collider[] hits = Physics.OverlapBox(
                 attackPos,
                 attackSize / 2f,
@@ -131,6 +145,10 @@ namespace Game.Player.Combat
         {
             AttackConfig config = m_attackConfigs[AttackType.Aerial];
             Vector3 attackPos = transform.position;
+
+            m_lastAerialAttackPos = attackPos;
+            m_lastAerialAttackRadius = config.m_radius;
+            m_gizmoDisplayTimer = GIZMO_DISPLAY_DURATION;
 
             Collider[] hits = Physics.OverlapSphere(
                 attackPos,
@@ -157,7 +175,9 @@ namespace Game.Player.Combat
 
         private void UpdateAttackCooldowns()
         {
-            foreach (var attackType in m_canAttack.Keys)
+            List<AttackType> attackTypes = new List<AttackType>(m_canAttack.Keys);
+
+            foreach (var attackType in attackTypes)
             {
                 if (!m_canAttack[attackType])
                 {
@@ -172,7 +192,15 @@ namespace Game.Player.Combat
             }
         }
 
-        [ContextMenu("Test Normal Attack")]
+        private void UpdateGizmoDisplay()
+        {
+            if (m_gizmoDisplayTimer > 0f)
+            {
+                m_gizmoDisplayTimer -= Time.deltaTime;
+            }
+        }
+
+        [TestMethod("Test Normal Attack")]
         private void TestNormalAttack()
         {
             TryAttack(1f);
@@ -184,6 +212,64 @@ namespace Game.Player.Combat
             AttackConfig config = m_attackConfigs[pAttackType];
             if (config.m_cooldown <= 0) return 1f;
             return Mathf.Clamp01(1f - (m_attackCooldownTimers[pAttackType] / config.m_cooldown));
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (!m_showGizmo || m_gizmoDisplayTimer <= 0f) return;
+
+            // Normal Attack (Box)
+            if (m_lastNormalAttackSize.magnitude > 0)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireCube(m_lastNormalAttackPos, m_lastNormalAttackSize);
+                Gizmos.color = new Color(1, 0, 0, 0.1f);
+                Gizmos.DrawCube(m_lastNormalAttackPos, m_lastNormalAttackSize);
+            }
+
+            // Aerial Attack (Vertical Circle)
+            if (m_lastAerialAttackRadius > 0)
+            {
+                Gizmos.color = Color.blue;
+                DrawVerticalWireCircle(m_lastAerialAttackPos, m_lastAerialAttackRadius);
+                Gizmos.color = new Color(0, 0, 1, 0.1f);
+                DrawVerticalFilledCircle(m_lastAerialAttackPos, m_lastAerialAttackRadius);
+            }
+        }
+
+        private void DrawVerticalWireCircle(Vector3 pCenter, float pRadius)
+        {
+            int segments = 16;
+            float deltaTheta = Mathf.PI * 2f / segments;
+
+            for (int i = 0; i < segments; i++)
+            {
+                float theta1 = i * deltaTheta;
+                float theta2 = (i + 1) * deltaTheta;
+
+                Vector3 point1 = pCenter + new Vector3(Mathf.Cos(theta1) * pRadius, Mathf.Sin(theta1) * pRadius, 0);
+                Vector3 point2 = pCenter + new Vector3(Mathf.Cos(theta2) * pRadius, Mathf.Sin(theta2) * pRadius, 0);
+
+                Gizmos.DrawLine(point1, point2);
+            }
+        }
+
+        private void DrawVerticalFilledCircle(Vector3 pCenter, float pRadius)
+        {
+            int segments = 8;
+            float deltaTheta = Mathf.PI * 2f / segments;
+
+            for (int i = 0; i < segments; i++)
+            {
+                float theta1 = i * deltaTheta;
+                float theta2 = (i + 1) * deltaTheta;
+
+                Vector3 point1 = pCenter + new Vector3(Mathf.Cos(theta1) * pRadius, Mathf.Sin(theta1) * pRadius, 0);
+                Vector3 point2 = pCenter + new Vector3(Mathf.Cos(theta2) * pRadius, Mathf.Sin(theta2) * pRadius, 0);
+
+                Gizmos.DrawLine(pCenter, point1);
+                Gizmos.DrawLine(point1, point2);
+            }
         }
     }
 }

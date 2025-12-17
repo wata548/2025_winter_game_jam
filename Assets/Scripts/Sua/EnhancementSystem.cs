@@ -1,12 +1,12 @@
 using UnityEngine;
 using System;
 using Game.Player.Movement;
+using Extension.Test;
 
 namespace Game.Player.Stats
 {
     public class EnhancementSystem : MonoBehaviour
     {
-
         public event Action<int> OnAttackEnhancementChanged;
         public event Action<int> OnFallEnhancementChanged;
         public event Action<int> OnHealingEnhancementChanged;
@@ -127,19 +127,19 @@ namespace Game.Player.Stats
             return 1f - (m_healingEnhancementLevel * 0.1f);
         }
 
-        [ContextMenu("Test Enhance Attack")]
+        [TestMethod("Test Enhance Attack")]
         private void TestEnhanceAttack()
         {
             TryEnhanceAttack();
         }
 
-        [ContextMenu("Test Enhance Fall")]
+        [TestMethod("Test Enhance Fall")]
         private void TestEnhanceFall()
         {
             TryEnhanceFall();
         }
 
-        [ContextMenu("Test Enhance Healing")]
+        [TestMethod("Test Enhance Healing")]
         private void TestEnhanceHealing()
         {
             TryEnhanceHealing();

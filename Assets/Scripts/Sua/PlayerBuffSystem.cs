@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using Extension.Test;
 
 namespace Game.Player.Stats
 {
@@ -75,13 +76,13 @@ namespace Game.Player.Stats
             return m_currentBuff == BuffType.Offense ? OFFENSE_ATTACK_BONUS : 0;
         }
 
-        [ContextMenu("Test Hit")]
+        [TestMethod("Test Hit")]
         private void TestHit()
         {
             OnPlayerHit();
         }
 
-        [ContextMenu("Test Force Switch")]
+        [TestMethod("Test Force Switch")]
         private void TestForceSwitch()
         {
             ForceSwitch();

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using Extension.Test;
 
 namespace Game.Player.Stats
 {
@@ -64,13 +65,13 @@ namespace Game.Player.Stats
             Debug.Log($"[PoisonSystem] Poison damage applied: {damage} (Stack: {m_currentPoisonStack})!");
         }
 
-        [ContextMenu("Test Add Poison Stack")]
+        [TestMethod("Test Add Poison Stack")]
         private void TestAddPoisonStack()
         {
             AddPoisonStack(2);
         }
 
-        [ContextMenu("Test Remove Poison Stack")]
+        [TestMethod("Test Remove Poison Stack")]
         private void TestRemovePoisonStack()
         {
             RemovePoisonStack(1);
