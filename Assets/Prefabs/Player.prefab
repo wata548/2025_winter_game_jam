@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6884905155076562898}
+  - component: {fileID: 8988737426788732942}
   - component: {fileID: 4041687911757900573}
   - component: {fileID: 5666856529714894708}
   - component: {fileID: 4717230391197563452}
@@ -49,6 +50,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8988737426788732942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6257123280473501605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a097e10d915ac241baaf62f79a99aa6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Player.PlayerLogger
+  m_enableLogging: 0
 --- !u!114 &4041687911757900573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,11 +121,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Game.Player.Combat.AttackSystem
   m_normalAttackCooldown: 0.5
   m_normalAttackRange: 2
-  m_normalAttackHeight: 1
   m_normalBaseDamage: 1
+  m_normalAttackDuration: 0.1
   m_aerialAttackRadius: 3
   m_aerialBaseDamage: 1
+  m_aerialAttackDuration: 0.3
   m_enemyTag: Enemy
+  m_showGizmo: 1
 --- !u!114 &9084907160901830409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,7 +140,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b021d50280e40374aacca0b1fa578731, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Player.Stats.HealingSystem
-  m_healTick: 0.1
+  m_healStartDelay: 2
+  m_healInterval: 1
   m_threadCostPerHeal: 10
   m_healthPerHeal: 1
 --- !u!114 &1699877827647714756
@@ -139,7 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eed2e32634b0d0045a284ffbf8b67416, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Player.Stats.HealthSystem
-  m_invincibilityDuration: 0.3
+  m_invulnerableDuration: 0.5
 --- !u!114 &6943666083483649038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,7 +218,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Player.Combat.KnockbackSystem
   m_knockbackForce: 10
-  m_knockbackDuration: 0.2
+  m_knockbackUpForce: 5
+  m_enemyTag: Enemy
 --- !u!114 &8200179331768621055
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -215,16 +233,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Player.Combat.SkillSystem
   m_shell1SkillCooldown: 5
-  m_shell1SkillMoltCost: 20
   m_shell1SkillRadius: 5
   m_shell1PoisonStackAmount: 2
   m_shell2SkillCooldown: 3
-  m_shell2SkillMoltCost: 15
-  m_shell2MoveSpeedMultiplier: 1.5
-  m_shell2DurationSeconds: 5
   m_shell3SkillCooldown: 4
-  m_shell3SkillMoltCost: 25
   m_enemyTag: Enemy
+  m_showGizmo: 1
 --- !u!114 &3825862715340786355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -237,8 +251,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d1df688f3cce884fbe26b009fed4902, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Player.Stats.PoisonSystem
-  m_poisonTickInterval: 1
-  m_damagePerStack: 1
 --- !u!114 &2128955395137192839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251,6 +263,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2249c8310c2e14848baea38ee0e5a556, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Player.Stats.PlayerBuffSystem
+  m_shell2BuffDuration: 5
+  m_shell2SpeedMultiplier: 2
 --- !u!33 &2787236535462166232
 MeshFilter:
   m_ObjectHideFlags: 0

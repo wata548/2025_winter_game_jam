@@ -20,12 +20,11 @@ namespace Game.Player.Stats
         private Game.Player.Movement.PlayerMovement m_playerMovement = null;
         private PlayerStats m_playerStats = null;
 
-        // Shell2 Buff
         private bool m_shell2BuffActive = false;
         private float m_shell2BuffTimer = 0f;
         [SerializeField] private float m_shell2BuffDuration = 5f;
+        [SerializeField] private float m_shell2SpeedMultiplier = 2f;
 
-        // Shell3 Buff (Defense/Offense)
         private BuffType m_shell3CurrentBuff = BuffType.Defense;
 
         private void Awake()
@@ -55,8 +54,11 @@ namespace Game.Player.Stats
             m_shell2BuffActive = true;
             m_shell2BuffTimer = m_shell2BuffDuration;
 
+            m_playerMovement.ApplyMoveSpeedMultiplier(m_shell2SpeedMultiplier);
+            m_playerMovement.ApplyJumpStrengthMultiplier(m_shell2SpeedMultiplier);
+
             OnBuffApplied?.Invoke(BuffType.Shell2Buff);
-            Debug.Log("[PlayerBuffSystem] Shell2 Buff activated!");
+            Debug.Log("[PlayerBuffSystem] Shell2 Buff activated! (Speed 2x, Jump 2x)");
             return true;
         }
 
@@ -69,6 +71,8 @@ namespace Game.Player.Stats
             if (m_shell2BuffTimer <= 0f)
             {
                 m_shell2BuffActive = false;
+                m_playerMovement.ApplyMoveSpeedMultiplier(1f);
+                m_playerMovement.ApplyJumpStrengthMultiplier(1f);
                 Debug.Log("[PlayerBuffSystem] Shell2 Buff expired!");
             }
         }
