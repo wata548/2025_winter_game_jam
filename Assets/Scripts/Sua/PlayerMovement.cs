@@ -4,25 +4,18 @@ using UnityEngine;
 namespace Game.Player.Movement
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class PlayerMovement : MonoBehaviour
+    public class PlayerMovement : Physic.Movement
     {
         //==================================================||Constants 
-        private const float JUMP_PEEK_HEIGHT = 4f;
-        private const float JUMP_PEEK_INTERVAL = 0.3f;
-        private const float GROUND_CHECK_OFFSET = 0.9f;
-        private const float GROUND_CHECKER_HEIGHT = 0.01f;
         private const float WALL_CHECK_OFFSET = 1.1f;
 
         //==================================================||Fields - Movement
-        private Rigidbody m_rigid = null;
-        private bool m_isGround = false;
-        private bool m_slowFalling = false;
         private float m_currentMoveInput = 0f;
         private float m_lastMoveDirection = 1f;
 
         //==================================================||Fields - Jump & Gravity
-        private float m_jumpScale;
-        private float m_gravityScale;
+        private float m_jumpScale = 1;
+        private float m_gravityScale = 1;
 
         [SerializeField] private float m_maxMoveSpeed = 10f;
         [SerializeField] private float m_moveAcceleration = 25f;
@@ -39,72 +32,27 @@ namespace Game.Player.Movement
         private float m_dashTimer = 0f;
         private float m_dashCooldownTimer = 0f;
         private float m_dashDirection = 1f;
-
-        //==================================================||Jump & Gravity 
-        public void SetActiveSlowFalling(bool pOn, float pPower = 0.3f)
-        {
-            m_slowFallingPower = pPower;
-            m_slowFalling = pOn;
+        
+        //==================================================||Jump & Falling
+        public void Jump() {
+            base.Jump(m_jumpScale);
+        }
+        public void SetActiveSlowFalling(bool pOn) {
+            SetActiveSlowFalling(pOn, m_gravityScale);
         }
 
-        public void Jump()
+        //==================================================||Movement
+        public void ApplyMovement(float pDirection)
         {
-            var velocity = m_rigid.linearVelocity;
-            velocity.y += m_jumpScale;
-            m_rigid.linearVelocity = velocity;
-        }
-
-        private bool IsGround(Vector3 pPos, float pGravity, out float pLength) {
-            pLength = 0;
-            if (pGravity > 0)
-                return false;
-            
-            var halfScale = transform.localScale/ 2f;
-            var center = pPos;
-            center.y += halfScale.y;
-            halfScale *= GROUND_CHECK_OFFSET;
-            halfScale.y = GROUND_CHECKER_HEIGHT / 2;
-            center.y -= GROUND_CHECKER_HEIGHT;
-
-            var contacts = Physics.BoxCastAll(
-                center,
-                halfScale,
-                Vector3.down,
-                Quaternion.identity,
-                -pGravity * Time.timeScale * Time.deltaTime + transform.localScale.y,
-                LayerMask.GetMask("Ground")
-            ).Where(hit => hit.point.y < pPos.y);
-            
-            if (!contacts.Any())
-                return false;
-
-            pLength = (contacts.Min(hit => hit.distance) - transform.localScale.y);
-            return true;
-        }
-
-        private void GravityProcess()
-        {
-            var velocity = m_rigid.linearVelocity;
-
-            if (velocity.y <= 0 && m_slowFalling)
-                velocity.y += m_gravityScale * Time.deltaTime * m_slowFallingPower;
-            else
-                velocity.y += m_gravityScale * Time.deltaTime;
-            m_isGround = IsGround(transform.position, velocity.y, out var delta);
-            
-            if (m_isGround)
+            m_currentMoveInput = pDirection;
+            if (Mathf.Abs(pDirection) > 0.01f)
             {
-                velocity.y = 0;
-                var pos = transform.position;
-                pos.y -= delta;
-                transform.position = pos;
-                m_slowFalling = false;
+                m_lastMoveDirection = Mathf.Sign(pDirection);
             }
-            m_rigid.linearVelocity = velocity;
         }
-
+        
         private void OffsetXMovement() {
-            var velocity = m_rigid.linearVelocity;
+            var velocity = _rigid.linearVelocity;
             if (velocity.x == 0)
                 return;
             
@@ -123,17 +71,7 @@ namespace Game.Player.Movement
             if (wall)
                 velocity.x = 0;
 
-            m_rigid.linearVelocity = velocity;
-        }
-
-        //==================================================||Movement
-        public void ApplyMovement(float pDirection)
-        {
-            m_currentMoveInput = pDirection;
-            if (Mathf.Abs(pDirection) > 0.01f)
-            {
-                m_lastMoveDirection = Mathf.Sign(pDirection);
-            }
+            _rigid.linearVelocity = velocity;
         }
 
         //==================================================||Dash
@@ -173,41 +111,35 @@ namespace Game.Player.Movement
         }
 
         //==================================================||Enhancement
-        public void ApplyFallSpeedMultiplier(float pMultiplier)
-        {
-            m_gravityScale = -2 * JUMP_PEEK_HEIGHT / JUMP_PEEK_INTERVAL / JUMP_PEEK_INTERVAL * pMultiplier;
-        }
+        public void ApplyFallSpeedMultiplier(float pMultiplier) =>
+            m_gravityScale = pMultiplier;
 
-        public void ApplyJumpStrengthMultiplier(float pMultiplier)
-        {
-            m_jumpScale = 2 * JUMP_PEEK_HEIGHT / JUMP_PEEK_INTERVAL * pMultiplier;
-        }
+        public void ApplyJumpStrengthMultiplier(float pMultiplier) =>
+            m_jumpScale = pMultiplier;
 
-        public void ApplyMoveSpeedMultiplier(float pMultiplier)
-        {
+        public void ApplyMoveSpeedMultiplier(float pMultiplier) =>
             m_maxMoveSpeed = 10f * pMultiplier;
-        }
 
         //==================================================||Properties
         public bool IsDashing => m_isDashing;
         public bool CanDash => m_dashCooldownTimer <= 0f && !m_isDashing;
         public float DashCooldownProgress => 1f - Mathf.Clamp01(m_dashCooldownTimer / m_dashCooldown);
-        public bool IsGrounded => m_isGround;
+        public bool IsGrounded => IsGround;
         public float GetCurrentMoveInput() => m_currentMoveInput;
 
         //==================================================||Movement Process
         private void MoveProcess()
         {
-            var velocity = m_rigid.linearVelocity;
+            var velocity = _rigid.linearVelocity;
 
             if (m_isDashing)
             {
                 velocity.x = m_dashDirection * m_dashSpeed;
-                m_rigid.linearVelocity = velocity;
+                _rigid.linearVelocity = velocity;
                 return;
             }
 
-            float acceleration = m_isGround ? m_moveAcceleration : m_airAcceleration;
+            float acceleration = IsGround ? m_moveAcceleration : m_airAcceleration;
             float targetSpeed = m_currentMoveInput * m_maxMoveSpeed;
 
             if (Mathf.Abs(m_currentMoveInput) > 0.01f)
@@ -219,27 +151,20 @@ namespace Game.Player.Movement
                 velocity.x = Mathf.Lerp(velocity.x, 0f, m_moveDeceleration * Time.deltaTime);
             }
 
-            m_rigid.linearVelocity = velocity;
+            _rigid.linearVelocity = velocity;
         }
 
         //==================================================||Unity
-        private void Awake()
-        {
-            m_rigid = GetComponent<Rigidbody>();
-            m_rigid.useGravity = false;
-
-            m_rigid.constraints = RigidbodyConstraints.FreezeRotationX |
-                                  RigidbodyConstraints.FreezeRotationY |
-                                  RigidbodyConstraints.FreezeRotationZ;
-
-            m_jumpScale = 2 * JUMP_PEEK_HEIGHT / JUMP_PEEK_INTERVAL;
-            m_gravityScale = -m_jumpScale / JUMP_PEEK_INTERVAL;
+        protected override void Awake() {
+            base.Awake();
+            _rigid.constraints = RigidbodyConstraints.FreezeRotationX |
+                                 RigidbodyConstraints.FreezeRotationY |
+                                 RigidbodyConstraints.FreezeRotationZ;
         }
 
-        private void Update()
-        {
+        protected override void Update() {
+            base.Update();
             UpdateDash();
-            GravityProcess();
         }
 
         private void FixedUpdate()
@@ -247,20 +172,5 @@ namespace Game.Player.Movement
             MoveProcess();
             OffsetXMovement();
         }
-
-        /*It shows box which checking if player has contacted ground
-        #if UNITY_EDITOR
-                private void OnDrawGizmos() {
-                    var scale = transform.localScale;
-                    var center = transform.position;
-                    center.y -= scale.y / 2;
-                    scale *= GROUND_CHECK_OFFSET;
-                    scale.y = m_rigid != null ? m_rigid.linearVelocity.y * Time.deltaTime : 0;
-                    center.y += scale.y / 2;
-
-                    Gizmos.color = Color.red;
-                    Gizmos.DrawCube(center, scale);
-                }
-        #endif*/
     }
 }

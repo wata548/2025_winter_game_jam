@@ -6,15 +6,15 @@ namespace Physic {
     public class Movement: MonoBehaviour {
         
         //==================================================||Constants 
-        private const float JUMP_PEEK_HEIGHT = 4f;
-        private const float JUMP_PEEK_INTERVAL = 0.3f;
-        private const float JUMP_SCALE = 2 * JUMP_PEEK_HEIGHT / JUMP_PEEK_INTERVAL;
-        private const float GRAVITY_SCALE = -JUMP_SCALE / JUMP_PEEK_INTERVAL;
-        private const float GROUND_CHECK_OFFSET = 0.95f;
-        private const float GROUND_CHECKER_HEIGHT = 0.01f;
+        protected const float JUMP_PEEK_HEIGHT = 4.5f;
+        protected const float JUMP_PEEK_INTERVAL = 0.3f;
+        protected const float JUMP_SCALE = 2 * JUMP_PEEK_HEIGHT / JUMP_PEEK_INTERVAL;
+        protected const float GRAVITY_SCALE = -JUMP_SCALE / JUMP_PEEK_INTERVAL;
+        protected const float GROUND_CHECK_OFFSET = 0.95f;
+        protected const float GROUND_CHECKER_HEIGHT = 0.01f;
 
         //==================================================||Fields 
-        private Rigidbody _rigid = null;
+        protected Rigidbody _rigid = null;
         private bool _slowFalling = false;
         private float _slowFallingPower = 0.5f;
         
@@ -32,9 +32,9 @@ namespace Physic {
         public void Move(Vector3 pDir, float pSpeed = 1) =>
             _rigid.linearVelocity += pDir.normalized * pSpeed;
         
-        public void Jump() {
+        public void Jump(float pScale = 1) {
             var velocity = _rigid.linearVelocity;
-            velocity.y += JUMP_SCALE;
+            velocity.y += JUMP_SCALE * pScale;
             _rigid.linearVelocity = velocity;
         }
 
@@ -104,13 +104,13 @@ namespace Physic {
             _rigid.linearVelocity = velocity;
         }
         //==================================================||Unity
-        private void Awake() {
+        protected virtual void Awake() {
         
             _rigid = GetComponent<Rigidbody>();
             _rigid.useGravity = false;
         }
 
-        private void Update() {
+        protected virtual void Update() {
             GravityProcess();
         }
 /*It shows box which checking if player has contacted ground
