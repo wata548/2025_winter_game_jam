@@ -31,6 +31,8 @@ namespace UI {
         
         private SettingType _curType = default;
 
+        public static SettingManager Instance { get; private set; }
+        
         //==================================================||Methods 
         public void ChangeSettingType(string pType) =>
             ChangeSettingType(Enum.Parse<SettingType>(pType));
@@ -43,6 +45,10 @@ namespace UI {
             _closeText.text = _curType == SettingType.Setting ? "Close" : "Back";
         }
 
+        public void TurnOn() {
+            _wnd.SetActive(true);
+        }
+        
         public void CloseButton() {
             if (_curType != SettingType.Setting) {
                 ChangeSettingType(SettingType.Setting);
@@ -53,6 +59,13 @@ namespace UI {
         }
         
         //==================================================||Unity 
+        private void Awake() {
+            if (Instance == null)
+                Instance = this;
+            else
+                Destroy(gameObject);
+        }
+
         private void Start() {
             _matchSetting ??= _infos
                 .ToDictionary(info => info.Type, info => info.Window);
