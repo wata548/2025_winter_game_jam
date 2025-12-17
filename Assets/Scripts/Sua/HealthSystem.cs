@@ -6,140 +6,129 @@ namespace Game.Player.Stats
 {
     public class HealthSystem : MonoBehaviour, IEntity
     {
+        //==================================================||IEntity Implementation
+        public int MaxHp => m_playerStats.MaxHealth;
+        public int Hp => m_currentHealth;
+        public bool IsDead => m_currentHealth <= 0;
+        public int PoisonStack => m_currentPoisonStack;
+        public int CurrentHealth => m_currentHealth;
+        public bool IsInvulnerable => m_isInvulnerable;
 
-        public event Action<int, int> OnHealthChanged;
-        public event Action OnDeath;
+        //==================================================||Fields
+        public event Action<int> OnHealthChanged;
+        public event Action OnPlayerDead;
         public event Action<int> OnPoisonStackChanged;
 
-        private Game.Player.Stats.PlayerStats m_playerStats = null;
+        private PlayerStats m_playerStats = null;
         private PlayerBuffSystem m_playerBuffSystem = null;
+        private PoisonSystem m_poisonSystem = null;
         private int m_currentHealth = 0;
-        private int m_poisonStack = 0;
-        private bool m_isInvincible = false;
-        private float m_invincibilityTimer = 0f;
+        private int m_currentPoisonStack = 0;
+        private bool m_isInvulnerable = false;
+        private float m_invulnerableTimer = 0f;
 
-        [SerializeField] private float m_invincibilityDuration = 0.3f;
+        [SerializeField] private float m_invulnerableDuration = 0.5f;
 
         private void Awake()
         {
-            m_playerStats = GetComponent<Game.Player.Stats.PlayerStats>();
+            m_playerStats = GetComponent<PlayerStats>();
             m_playerBuffSystem = GetComponent<PlayerBuffSystem>();
+            m_poisonSystem = GetComponent<PoisonSystem>();
 
             if (m_playerStats == null)
             {
                 Debug.LogError("[HealthSystem] PlayerStats is missing!");
-                return;
+            }
+            if (m_playerBuffSystem == null)
+            {
+                Debug.LogError("[HealthSystem] PlayerBuffSystem is missing!");
+            }
+            if (m_poisonSystem == null)
+            {
+                Debug.LogError("[HealthSystem] PoisonSystem is missing!");
             }
         }
 
         private void Start()
         {
             m_currentHealth = m_playerStats.MaxHealth;
-            OnHealthChanged?.Invoke(m_currentHealth, m_playerStats.MaxHealth);
+            OnHealthChanged?.Invoke(m_currentHealth);
         }
 
         private void Update()
         {
-            UpdateInvincibility();
+            UpdateInvulnerable();
         }
 
-        public void TakeDamage(int pDamage)
+        public void GetDamage(int pDamage)
         {
-            if (m_isInvincible || m_currentHealth <= 0)
+            if (m_isInvulnerable) return;
+
+            // Def
+            if (m_playerBuffSystem.CanBlockDamage())
             {
+                m_playerBuffSystem.SwitchShell3Buff();
+                m_isInvulnerable = true;
+                m_invulnerableTimer = m_invulnerableDuration;
+                Debug.Log("[HealthSystem] Damage blocked by Defense!");
                 return;
             }
 
-            if (m_playerBuffSystem != null && m_playerBuffSystem.CanBlockDamage())
+            // Poison
+            int finalDamage = pDamage;
+            if (m_poisonSystem.IsPoisoned)
             {
-                m_playerBuffSystem.OnPlayerHit();
-                SetInvincible(true);
-                Debug.Log("[HealthSystem] Damage blocked by Defense buff!");
-                return;
+                finalDamage = Mathf.FloorToInt(pDamage * m_poisonSystem.GetDamageMultiplier());
+                Debug.Log($"[HealthSystem] Poison damage multiplier applied! {pDamage} ¡æ {finalDamage}");
             }
 
-            m_currentHealth -= pDamage;
-            m_currentHealth = Mathf.Max(0, m_currentHealth);
+            m_currentHealth -= finalDamage;
+            m_isInvulnerable = true;
+            m_invulnerableTimer = m_invulnerableDuration;
 
-            OnHealthChanged?.Invoke(m_currentHealth, m_playerStats.MaxHealth);
-            SetInvincible(true);
+            OnHealthChanged?.Invoke(m_currentHealth);
 
-            if (m_playerBuffSystem != null)
-            {
-                m_playerBuffSystem.OnPlayerHit();
-            }
+            // Shell3 check!!
+            m_playerBuffSystem.OnPlayerHit();
 
             if (m_currentHealth <= 0)
             {
-                OnDeath?.Invoke();
+                m_currentHealth = 0;
+                OnPlayerDead?.Invoke();
+                Debug.Log("[HealthSystem] Player Dead!");
             }
-        }
-
-        public void Heal(int pAmount)
-        {
-            m_currentHealth += pAmount;
-            m_currentHealth = Mathf.Min(m_currentHealth, m_playerStats.MaxHealth);
-
-            OnHealthChanged?.Invoke(m_currentHealth, m_playerStats.MaxHealth);
-        }
-
-        public void FullHeal()
-        {
-            m_currentHealth = m_playerStats.MaxHealth;
-            OnHealthChanged?.Invoke(m_currentHealth, m_playerStats.MaxHealth);
-        }
-
-        public void SetInvincible(bool pInvincible)
-        {
-            m_isInvincible = pInvincible;
-            m_invincibilityTimer = pInvincible ? m_invincibilityDuration : 0f;
-        }
-
-        private void UpdateInvincibility()
-        {
-            if (!m_isInvincible) return;
-
-            m_invincibilityTimer -= Time.deltaTime;
-            if (m_invincibilityTimer <= 0f)
-            {
-                m_isInvincible = false;
-            }
-        }
-
-        //==================================================||IEntity Implementation
-        public int MaxHp => m_playerStats.MaxHealth;
-        public int Hp => m_currentHealth;
-        public bool IsDead => !IsAlive;
-        public int PoisonStack => m_poisonStack;
-
-        public void GetDamage(int pAmount)
-        {
-            TakeDamage(pAmount);
         }
 
         public void GetHeal(int pAmount)
         {
-            Heal(pAmount);
+            if (m_currentHealth >= m_playerStats.MaxHealth) return;
+
+            m_currentHealth = Mathf.Min(m_currentHealth + pAmount, m_playerStats.MaxHealth);
+            OnHealthChanged?.Invoke(m_currentHealth);
         }
 
         public void AddPoisonStack(int pAmount)
         {
-            m_poisonStack += pAmount;
-            OnPoisonStackChanged?.Invoke(m_poisonStack);
-            Debug.Log($"[HealthSystem] Poison stack increased to {m_poisonStack}!");
+            m_currentPoisonStack += pAmount;
+            OnPoisonStackChanged?.Invoke(m_currentPoisonStack);
         }
 
         public void RemovePoisonStack(int pAmount)
         {
-            m_poisonStack -= pAmount;
-            m_poisonStack = Mathf.Max(0, m_poisonStack);
-            OnPoisonStackChanged?.Invoke(m_poisonStack);
-            Debug.Log($"[HealthSystem] Poison stack decreased to {m_poisonStack}!");
+            m_currentPoisonStack = Mathf.Max(0, m_currentPoisonStack - pAmount);
+            OnPoisonStackChanged?.Invoke(m_currentPoisonStack);
         }
 
-        //==================================================||Properties
-        public int CurrentHealth => m_currentHealth;
-        public bool IsInvincible => m_isInvincible;
-        public bool IsAlive => m_currentHealth > 0;
+        private void UpdateInvulnerable()
+        {
+            if (m_isInvulnerable)
+            {
+                m_invulnerableTimer -= Time.deltaTime;
+                if (m_invulnerableTimer <= 0f)
+                {
+                    m_isInvulnerable = false;
+                }
+            }
+        }
     }
 }
