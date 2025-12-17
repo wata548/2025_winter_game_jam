@@ -1,4 +1,5 @@
 using UnityEngine;
+using UInput = UnityEngine.Input;
 using Game.Input;
 using Game.Player.Movement;
 using Game.Player.Combat;

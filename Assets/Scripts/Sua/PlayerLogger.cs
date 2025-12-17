@@ -14,19 +14,14 @@ namespace Game.Player
         private MoltSystem m_moltSystem = null;
         private EnhancementSystem m_enhancementSystem = null;
         private ShellSystem m_shellSystem = null;
-        private SkillSystem m_skillSystem = null;
         private PlayerBuffSystem m_playerBuffSystem = null;
-        private Game.Player.Movement.PlayerMovement m_playerMovement = null;
 
         private int m_lastHealth = -1;
         private int m_lastAttackPower = -1;
         private int m_lastThread = -1;
         private int m_lastMolt = -1;
-        private int m_lastAttackEnhancement = -1;
-        private int m_lastFallEnhancement = -1;
-        private int m_lastHealingEnhancement = -1;
         private string m_lastEquippedShells = "";
-        private BuffType m_lastBuffType = BuffType.Defense;
+        private BuffType m_lastShell3Buff = BuffType.Defense;
 
         [SerializeField] private bool m_enableLogging = true;
 
@@ -38,9 +33,7 @@ namespace Game.Player
             m_moltSystem = GetComponent<MoltSystem>();
             m_enhancementSystem = GetComponent<EnhancementSystem>();
             m_shellSystem = GetComponent<ShellSystem>();
-            m_skillSystem = GetComponent<SkillSystem>();
             m_playerBuffSystem = GetComponent<PlayerBuffSystem>();
-            m_playerMovement = GetComponent<Game.Player.Movement.PlayerMovement>();
         }
 
         private void Update()
@@ -51,18 +44,17 @@ namespace Game.Player
             CheckAttackPowerChanges();
             CheckThreadChanges();
             CheckMoltChanges();
-            CheckEnhancementChanges();
             CheckShellChanges();
-            CheckBuffChanges();
+            CheckShell3BuffChanges();
         }
 
         private void CheckHealthChanges()
         {
-            int currentHealth = m_healthSystem.CurrentHealth;
+            int currentHealth = m_healthSystem.Hp;
             if (m_lastHealth != currentHealth)
             {
                 m_lastHealth = currentHealth;
-                Debug.Log($"[PlayerStateLogger] HP: {currentHealth}/{m_playerStats.MaxHealth}");
+                Debug.Log($"[PlayerLogger] HP: {currentHealth}/{m_playerStats.MaxHealth}");
             }
         }
 
@@ -72,7 +64,7 @@ namespace Game.Player
             if (m_lastAttackPower != currentAttack)
             {
                 m_lastAttackPower = currentAttack;
-                Debug.Log($"[PlayerStateLogger] ATK: {currentAttack}");
+                Debug.Log($"[PlayerLogger] ATK: {currentAttack}");
             }
         }
 
@@ -82,7 +74,7 @@ namespace Game.Player
             if (m_lastThread != currentThread)
             {
                 m_lastThread = currentThread;
-                Debug.Log($"[PlayerStateLogger] Thread: {currentThread}/{m_playerStats.MaxThread}");
+                Debug.Log($"[PlayerLogger] Thread: {currentThread}/{m_playerStats.MaxThread}");
             }
         }
 
@@ -92,32 +84,7 @@ namespace Game.Player
             if (m_lastMolt != currentMolt)
             {
                 m_lastMolt = currentMolt;
-                Debug.Log($"[PlayerStateLogger] Molt: {currentMolt}");
-            }
-        }
-
-        private void CheckEnhancementChanges()
-        {
-            int attackEnhance = m_enhancementSystem.AttackEnhancementLevel;
-            int fallEnhance = m_enhancementSystem.FallEnhancementLevel;
-            int healingEnhance = m_enhancementSystem.HealingEnhancementLevel;
-
-            if (m_lastAttackEnhancement != attackEnhance)
-            {
-                m_lastAttackEnhancement = attackEnhance;
-                Debug.Log($"[PlayerStateLogger] Atk: Lv.{attackEnhance}/10");
-            }
-
-            if (m_lastFallEnhancement != fallEnhance)
-            {
-                m_lastFallEnhancement = fallEnhance;
-                Debug.Log($"[PlayerStateLogger] FallSpd: Lv.{fallEnhance}/3");
-            }
-
-            if (m_lastHealingEnhancement != healingEnhance)
-            {
-                m_lastHealingEnhancement = healingEnhance;
-                Debug.Log($"[PlayerStateLogger] HealSpd: Lv.{healingEnhance}/5");
+                Debug.Log($"[PlayerLogger] Molt: {currentMolt}");
             }
         }
 
@@ -127,44 +94,46 @@ namespace Game.Player
             if (m_lastEquippedShells != currentShells)
             {
                 m_lastEquippedShells = currentShells;
-                Debug.Log($"[PlayerStateLogger] Sheel: {currentShells}");
+                Debug.Log($"[PlayerLogger] Shell: {currentShells}");
+            }
+        }
+
+        private void CheckShell3BuffChanges()
+        {
+            if (!m_shellSystem.IsShellEquipped(ShellType.Shell3)) return;
+
+            BuffType currentBuff = m_playerBuffSystem.Shell3CurrentBuff;
+            if (m_lastShell3Buff != currentBuff)
+            {
+                m_lastShell3Buff = currentBuff;
+                string buffName = currentBuff == BuffType.Defense ? "Defense" : "Offense";
+                Debug.Log($"[PlayerLogger] Shell3: {buffName}");
             }
         }
 
         private string GetEquippedShellsString()
         {
             string shells = "";
-            if (m_shellSystem.IsShellEquipped(ShellType.Shell1)) shells += "Shell1 ";
-            if (m_shellSystem.IsShellEquipped(ShellType.Shell2)) shells += "Shell2 ";
-            if (m_shellSystem.IsShellEquipped(ShellType.Shell3)) shells += "Shell3 ";
-            return shells.Length > 0 ? shells : "NOPE";
-        }
-
-        private void CheckBuffChanges()
-        {
-            BuffType currentBuff = m_playerBuffSystem.CurrentBuff;
-            if (m_lastBuffType != currentBuff)
-            {
-                m_lastBuffType = currentBuff;
-                string buffName = currentBuff == BuffType.Defense ? "Def" : "Atk";
-                Debug.Log($"[PlayerStateLogger] currnet buff: {buffName}");
-            }
+            if (m_shellSystem.IsShellEquipped(ShellType.Shell1)) shells += "S1 ";
+            if (m_shellSystem.IsShellEquipped(ShellType.Shell2)) shells += "S2 ";
+            if (m_shellSystem.IsShellEquipped(ShellType.Shell3)) shells += "S3 ";
+            return shells.Length > 0 ? shells.Trim() : "None";
         }
 
         [TestMethod("Log Current State")]
         public void LogCurrentState()
         {
-            Debug.Log($"====== [PlayerStateLogger] Player Log!!! ======" +
-                $"\nHealth: {m_healthSystem.CurrentHealth}/{m_playerStats.MaxHealth}" +
-                $"\nAtk: {m_playerStats.AttackPower}" +
-                $"\nThread: {m_threadSystem.CurrentThread}/{m_playerStats.MaxThread}" +
-                $"\nMolt: {m_moltSystem.CurrentMolt}" +
-                $"\nUpgrade.atk: Lv.{m_enhancementSystem.AttackEnhancementLevel}/10" +
-                $"\nUpgrade.fall: Lv.{m_enhancementSystem.FallEnhancementLevel}/3" +
-                $"\nUpgrade.heal: Lv.{m_enhancementSystem.HealingEnhancementLevel}/5" +
-                $"\nShell: {GetEquippedShellsString()}" +
-                $"\nBuff: {(m_playerBuffSystem.CurrentBuff == BuffType.Defense ? "Def" : "Atk")}" +
-                $"\n================================================");
+            Debug.Log($"====== [PlayerLogger] ======\n" +
+                $"HP: {m_healthSystem.Hp}/{m_playerStats.MaxHealth}\n" +
+                $"ATK: {m_playerStats.AttackPower}\n" +
+                $"Thread: {m_threadSystem.CurrentThread}/{m_playerStats.MaxThread}\n" +
+                $"Molt: {m_moltSystem.CurrentMolt}\n" +
+                $"Enhance ATK: Lv.{m_enhancementSystem.AttackEnhancementLevel + 1}/10\n" +
+                $"Enhance Fall: Lv.{m_enhancementSystem.FallEnhancementLevel + 1}/8\n" +
+                $"Enhance Heal: Lv.{m_enhancementSystem.HealingEnhancementLevel + 1}/6\n" +
+                $"Shell: {GetEquippedShellsString()}\n" +
+                (m_shellSystem.IsShellEquipped(ShellType.Shell3) ? $"Shell3 Buff: {(m_playerBuffSystem.Shell3CurrentBuff == BuffType.Defense ? "Defense" : "Offense")}\n" : "") +
+                $"=======================");
         }
     }
 }

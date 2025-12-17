@@ -11,8 +11,10 @@ namespace Game.Player.Stats
 
         private bool m_isHealing = false;
         private float m_healTimer = 0f;
+        private int m_healCount = 0;
 
-        [SerializeField] private float m_healTick = 0.1f;
+        [SerializeField] private float m_healStartDelay = 2f;
+        [SerializeField] private float m_healInterval = 1f;
         [SerializeField] private int m_threadCostPerHeal = 10;
         [SerializeField] private int m_healthPerHeal = 1;
 
@@ -22,18 +24,9 @@ namespace Game.Player.Stats
             m_threadSystem = GetComponent<ThreadSystem>();
             m_enhancementSystem = GetComponent<EnhancementSystem>();
 
-            if (m_healthSystem == null)
-            {
-                Debug.LogError("[HealingSystem] HealthSystem is missing!");
-            }
-            if (m_threadSystem == null)
-            {
-                Debug.LogError("[HealingSystem] ThreadSystem is missing!");
-            }
-            if (m_enhancementSystem == null)
-            {
-                Debug.LogError("[HealingSystem] EnhancementSystem is missing!");
-            }
+            if (m_healthSystem == null) Debug.LogError("[HealingSystem] HealthSystem is missing!");
+            if (m_threadSystem == null) Debug.LogError("[HealingSystem] ThreadSystem is missing!");
+            if (m_enhancementSystem == null) Debug.LogError("[HealingSystem] EnhancementSystem is missing!");
         }
 
         private void Update()
@@ -43,37 +36,47 @@ namespace Game.Player.Stats
 
         public void StartHealing()
         {
-            if (m_healthSystem.CurrentHealth >= m_healthSystem.CurrentHealth)
-            {
-                return;
-            }
+            if (m_healthSystem.Hp >= m_healthSystem.MaxHp) return;
             m_isHealing = true;
             m_healTimer = 0f;
+            m_healCount = 0;
+            Debug.Log("[HealingSystem] Started healing");
         }
 
         public void StopHealing()
         {
+            if (m_isHealing)
+            {
+                Debug.Log("[HealingSystem] Stopped healing");
+            }
             m_isHealing = false;
             m_healTimer = 0f;
+            m_healCount = 0;
         }
 
         private void UpdateHealing()
         {
             if (!m_isHealing) return;
 
-            float enhancedHealTick = m_healTick * m_enhancementSystem.GetHealingSpeedMultiplier();
             m_healTimer += Time.deltaTime;
 
-            if (m_healTimer >= enhancedHealTick)
+            if (m_healTimer >= m_healStartDelay)
             {
-                if (m_threadSystem.ConsumeThread(m_threadCostPerHeal))
+                float timeSinceStart = m_healTimer - m_healStartDelay;
+                int currentHealCount = Mathf.FloorToInt(timeSinceStart / m_healInterval);
+
+                if (currentHealCount > m_healCount)
                 {
-                    m_healthSystem.Heal(m_healthPerHeal);
-                    m_healTimer = 0f;
-                }
-                else
-                {
-                    StopHealing();
+                    if (m_threadSystem.ConsumeThread(m_threadCostPerHeal))
+                    {
+                        m_healthSystem.GetHeal(m_healthPerHeal);
+                        m_healCount = currentHealCount;
+                        Debug.Log("[HealingSystem] Healing!");
+                    }
+                    else
+                    {
+                        StopHealing();
+                    }
                 }
             }
         }

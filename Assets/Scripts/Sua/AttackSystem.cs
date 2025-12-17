@@ -20,7 +20,6 @@ namespace Game.Player.Combat
 
         [SerializeField] private float m_normalAttackCooldown = 0.5f;
         [SerializeField] private float m_normalAttackRange = 2f;
-        [SerializeField] private float m_normalAttackHeight = 1f;
         [SerializeField] private int m_normalBaseDamage = 1;
         [SerializeField] private float m_normalAttackDuration = 0.1f;
 
@@ -137,7 +136,7 @@ namespace Game.Player.Combat
 
             m_normalAttackTimer -= Time.deltaTime;
 
-            // 위치추적
+            // 위치 추적
             AttackConfig config = m_attackConfigs[AttackType.Normal];
             Vector3 attackDirection = m_normalAttackDirection > 0 ? Vector3.right : Vector3.left;
             Vector3 attackPos = transform.position + attackDirection * (config.m_range / 2f);

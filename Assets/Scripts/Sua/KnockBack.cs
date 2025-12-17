@@ -1,5 +1,4 @@
 using UnityEngine;
-using System;
 using Extension.Test;
 
 namespace Game.Player.Combat
@@ -9,7 +8,7 @@ namespace Game.Player.Combat
 
         private Rigidbody m_rigid = null;
 
-        [SerializeField] private float m_knockbackForce = 15f;
+        [SerializeField] private float m_knockbackForce = 12f;
         [SerializeField] private float m_knockbackUpForce = 5f;
         [SerializeField] private string m_enemyTag = "Enemy";
 
@@ -23,28 +22,18 @@ namespace Game.Player.Combat
             }
         }
 
-        public void ApplyKnockback(Vector3 pSourcePosition)
+        private void ApplyKnockback(Vector3 pSourcePosition)
         {
-            Vector3 knockbackDir = (transform.position - pSourcePosition).normalized;
-            knockbackDir.y = 0;
+            Vector3 direction = (transform.position - pSourcePosition).normalized;
+            direction.y = 0;
 
             var velocity = m_rigid.linearVelocity;
-            velocity.x = knockbackDir.x * m_knockbackForce;
+            velocity.x = direction.x * m_knockbackForce;
             velocity.y += m_knockbackUpForce;
             m_rigid.linearVelocity = velocity;
-
-            Debug.Log("[KnockbackSystem] Knockback applied!");
         }
 
         private void OnTriggerEnter(Collider pCollider)
-        {
-            if (pCollider.CompareTag(m_enemyTag))
-            {
-                ApplyKnockback(pCollider.transform.position);
-            }
-        }
-
-        private void OnTriggerStay(Collider pCollider)
         {
             if (pCollider.CompareTag(m_enemyTag))
             {

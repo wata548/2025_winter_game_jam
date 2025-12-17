@@ -17,7 +17,9 @@ namespace Game.Player.Combat
         public event Action<ShellType> OnSkillExecuted;
 
         private ShellSystem m_shellSystem = null;
-        private AttackSystem m_attackSystem = null;
+        private Game.Player.Stats.PlayerStats m_playerStats = null;
+        private Game.Player.Movement.PlayerMovement m_playerMovement = null;
+        private Game.Player.Stats.PlayerBuffSystem m_playerBuffSystem = null;
 
         private Dictionary<ShellType, SkillConfig> m_skillConfigs = new Dictionary<ShellType, SkillConfig>();
         private Dictionary<ShellType, float> m_skillCooldownTimers = new Dictionary<ShellType, float>();
@@ -28,31 +30,25 @@ namespace Game.Player.Combat
         [SerializeField] private int m_shell1PoisonStackAmount = 2;
 
         [SerializeField] private float m_shell2SkillCooldown = 3f;
-        [SerializeField] private float m_shell2MoveSpeedMultiplier = 1.5f;
-        [SerializeField] private float m_shell2DurationSeconds = 5f;
 
         [SerializeField] private float m_shell3SkillCooldown = 4f;
 
         [SerializeField] private string m_enemyTag = "Enemy";
         [SerializeField] private bool m_showGizmo = true;
 
-        private float m_shell2BuffTimer = 0f;
-        private bool m_shell2BuffActive = false;
         private float m_gizmoDisplayTimer = 0f;
         private const float GIZMO_DISPLAY_DURATION = 0.5f;
 
         private void Awake()
         {
             m_shellSystem = GetComponent<ShellSystem>();
-            m_attackSystem = GetComponent<AttackSystem>();
+            m_playerStats = GetComponent<Game.Player.Stats.PlayerStats>();
+            m_playerMovement = GetComponent<Game.Player.Movement.PlayerMovement>();
+            m_playerBuffSystem = GetComponent<Game.Player.Stats.PlayerBuffSystem>();
 
             if (m_shellSystem == null)
             {
                 Debug.LogError("[SkillSystem] ShellSystem is missing!");
-            }
-            if (m_attackSystem == null)
-            {
-                Debug.LogError("[SkillSystem] AttackSystem is missing!");
             }
 
             InitializeSkillConfigs();
@@ -61,26 +57,14 @@ namespace Game.Player.Combat
         private void Update()
         {
             UpdateSkillCooldowns();
-            UpdateShell2Buff();
             UpdateGizmoDisplay();
         }
 
         private void InitializeSkillConfigs()
         {
-            m_skillConfigs[ShellType.Shell1] = new SkillConfig
-            {
-                m_cooldown = m_shell1SkillCooldown
-            };
-
-            m_skillConfigs[ShellType.Shell2] = new SkillConfig
-            {
-                m_cooldown = m_shell2SkillCooldown
-            };
-
-            m_skillConfigs[ShellType.Shell3] = new SkillConfig
-            {
-                m_cooldown = m_shell3SkillCooldown
-            };
+            m_skillConfigs[ShellType.Shell1] = new SkillConfig { m_cooldown = m_shell1SkillCooldown };
+            m_skillConfigs[ShellType.Shell2] = new SkillConfig { m_cooldown = m_shell2SkillCooldown };
+            m_skillConfigs[ShellType.Shell3] = new SkillConfig { m_cooldown = m_shell3SkillCooldown };
 
             m_canUseSkill[ShellType.Shell1] = true;
             m_canUseSkill[ShellType.Shell2] = true;
@@ -95,20 +79,17 @@ namespace Game.Player.Combat
         {
             if (!m_shellSystem.IsShellEquipped(pShellType))
             {
-                Debug.LogWarning($"[SkillSystem] {pShellType} is not equipped!");
                 return false;
             }
 
             if (!m_canUseSkill[pShellType])
             {
-                Debug.LogWarning($"[SkillSystem] {pShellType} skill is on cooldown!");
                 return false;
             }
 
             ExecuteSkill(pShellType);
 
-            SkillConfig config = m_skillConfigs[pShellType];
-            m_skillCooldownTimers[pShellType] = config.m_cooldown;
+            m_skillCooldownTimers[pShellType] = m_skillConfigs[pShellType].m_cooldown;
             m_canUseSkill[pShellType] = false;
             OnSkillExecuted?.Invoke(pShellType);
 
@@ -135,10 +116,7 @@ namespace Game.Player.Combat
         {
             m_gizmoDisplayTimer = GIZMO_DISPLAY_DURATION;
 
-            Collider[] hits = Physics.OverlapSphere(
-                transform.position,
-                m_shell1SkillRadius
-            );
+            Collider[] hits = Physics.OverlapSphere(transform.position, m_shell1SkillRadius);
 
             foreach (Collider hit in hits)
             {
@@ -152,36 +130,23 @@ namespace Game.Player.Combat
                 }
             }
 
-            Debug.Log($"[SkillSystem] Shell1 Skill executed! Poison applied to enemies in {m_shell1SkillRadius}m radius!");
+            Debug.Log("[SkillSystem] Shell1 Skill executed!");
         }
 
         private void ExecuteShell2Skill()
         {
-            m_shell2BuffActive = true;
-            m_shell2BuffTimer = m_shell2DurationSeconds;
-            Debug.Log($"[SkillSystem] Shell2 Skill executed! Move speed increased for {m_shell2DurationSeconds} seconds!");
-        }
-
-        private void UpdateShell2Buff()
-        {
-            if (!m_shell2BuffActive) return;
-
-            m_shell2BuffTimer -= Time.deltaTime;
-
-            if (m_shell2BuffTimer <= 0f)
+            if (m_playerBuffSystem != null)
             {
-                m_shell2BuffActive = false;
-                Debug.Log("[SkillSystem] Shell2 buff expired!");
+                m_playerBuffSystem.TryApplyShell2Buff();
             }
         }
 
         private void ExecuteShell3Skill()
         {
-            Game.Player.Stats.PlayerBuffSystem playerBuffSystem = GetComponent<Game.Player.Stats.PlayerBuffSystem>();
-            if (playerBuffSystem != null)
+            if (m_playerBuffSystem != null)
             {
-                playerBuffSystem.ForceSwitch();
-                Debug.Log("[SkillSystem] Shell3 Skill executed! Buff state switched!");
+                m_playerBuffSystem.SwitchShell3Buff();
+                Debug.Log("[SkillSystem] Shell3 Skill executed!");
             }
         }
 
@@ -212,26 +177,17 @@ namespace Game.Player.Combat
             }
         }
 
-        [ContextMenu("Test Execute Shell1 Skill")]
-        private void TestExecuteShell1Skill()
-        {
-            TryExecuteSkill(ShellType.Shell1);
-        }
-
         public bool CanUseSkill(ShellType pShellType) => m_canUseSkill[pShellType];
         public float GetSkillCooldownProgress(ShellType pShellType)
         {
             SkillConfig config = m_skillConfigs[pShellType];
             return Mathf.Clamp01(1f - (m_skillCooldownTimers[pShellType] / config.m_cooldown));
         }
-        public bool IsShell2BuffActive => m_shell2BuffActive;
-        public float Shell2BuffRemainingTime => m_shell2BuffTimer;
 
         private void OnDrawGizmos()
         {
             if (!m_showGizmo || m_gizmoDisplayTimer <= 0f) return;
 
-            // Shell1 Skill Radius
             Gizmos.color = new Color(1, 0, 1, 0.3f);
             DrawWireSphere(transform.position, m_shell1SkillRadius);
         }
