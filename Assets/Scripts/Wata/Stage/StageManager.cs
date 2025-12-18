@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Extension.Test;
 using UI;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Stage {
     public class StageManager: MonoBehaviour {
@@ -16,9 +18,12 @@ namespace Stage {
         private List<Stage> _stages = null;
         private Stage _curStage = null;
         private int _stageCnt = 0;
+        
+       //==================================================||Properties 
+       public static StageManager Instance { get; private set; } = null;
 
         [TestMethod]
-        private void NextStage() {
+        public void NextStage() {
                 
             _stageCnt++;
             if(_stageCnt == MAX_STAGE_COUNT + 1)
@@ -36,7 +41,11 @@ namespace Stage {
                 _curStage = Instantiate(pStage);
             });
         }
-        
+
+        private void Awake() {
+            Instance = this;
+        }
+
         private void Start() {
             _stages ??= Resources.LoadAll<Stage>("Stage").ToList();
             SetStage(_tutorialStage);

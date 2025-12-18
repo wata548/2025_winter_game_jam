@@ -2,6 +2,7 @@ using UnityEngine;
 using UInput = UnityEngine.Input;
 using System.Collections.Generic;
 using System;
+using Entity.Enemy;
 using Extension.Test;
 
 namespace Game.Player.Combat
@@ -136,7 +137,7 @@ namespace Game.Player.Combat
 
             m_normalAttackTimer -= Time.deltaTime;
 
-            // À§Ä¡ ÃßÀû
+            // ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½
             AttackConfig config = m_attackConfigs[AttackType.Normal];
             Vector3 attackDirection = m_normalAttackDirection > 0 ? Vector3.right : Vector3.left;
             Vector3 attackPos = transform.position + attackDirection * (config.m_range / 2f);
@@ -186,7 +187,7 @@ namespace Game.Player.Combat
 
             m_aerialAttackTimer -= Time.deltaTime;
 
-            // À§Ä¡ÃßÀû
+            // ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½
             m_lastAerialAttackPos = transform.position;
 
             // Hit check
@@ -218,6 +219,7 @@ namespace Game.Player.Combat
             AttackConfig config = m_attackConfigs[pAttackType];
             int damage = m_playerStats.AttackPower + config.m_baseDamage;
             Debug.Log($"[AttackSystem] {pTarget.name} took {damage} damage from {pAttackType}!");
+            pTarget.GetComponent<Enemy>().GetDamage(damage);
         }
 
         private void UpdateAttackCooldowns()
@@ -265,7 +267,7 @@ namespace Game.Player.Combat
         {
             if (!m_showGizmo || m_gizmoDisplayTimer <= 0f) return;
 
-            // Normal ¸»ÀÌ ¾È µÈ´Ù´Â ¶æ
+            // Normal ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½È´Ù´ï¿½ ï¿½ï¿½
             if (m_normalAttackActive && m_lastNormalAttackSize.magnitude > 0)
             {
                 Gizmos.color = Color.red;
@@ -274,7 +276,7 @@ namespace Game.Player.Combat
                 Gizmos.DrawCube(m_lastNormalAttackPos, m_lastNormalAttackSize);
             }
 
-            // °øÁß
+            // ï¿½ï¿½ï¿½ï¿½
             if (m_aerialAttackActive && m_lastAerialAttackRadius > 0)
             {
                 Gizmos.color = Color.blue;
