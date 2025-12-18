@@ -22,12 +22,16 @@ namespace Stage {
        //==================================================||Properties 
        public static StageManager Instance { get; private set; } = null;
 
+       public void Refresh() {
+           _curStage.Refresh();
+       }
+       
         [TestMethod]
         public void NextStage() {
                 
             _stageCnt++;
             if (_stageCnt > MAX_STAGE_COUNT + 1) {
-                FadeController.Instance.Load("Ending");
+                FadeController.Instance.Load("Clear");
                 return;
             }
             if(_stageCnt == MAX_STAGE_COUNT + 1)

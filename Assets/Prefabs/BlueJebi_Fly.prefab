@@ -204,7 +204,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Entity.Enemy.Enemy
   <Speed>k__BackingField: 3
-  <MaxHp>k__BackingField: 100
+  <MaxHp>k__BackingField: 35
   <AttackMotion>k__BackingField: {fileID: 2833204050661786800}
   <SpecialAttackMotion>k__BackingField: {fileID: 3395412895063813029}
   <GivePoisonStack>k__BackingField: 0

@@ -81,7 +81,7 @@ namespace Game.Player.Stats
             if (m_poisonSystem.IsPoisoned)
             {
                 finalDamage = Mathf.FloorToInt(pDamage * m_poisonSystem.GetDamageMultiplier());
-                Debug.Log($"[HealthSystem] Poison damage multiplier applied! {pDamage} ¢®©¡ {finalDamage}");
+                Debug.Log($"[HealthSystem] Poison damage multiplier applied! {pDamage} ï¿½ï¿½ï¿½ï¿½ {finalDamage}");
             }
 
             m_currentHealth -= finalDamage;
@@ -102,6 +102,7 @@ namespace Game.Player.Stats
             {
                 m_currentHealth = 0;
                 OnPlayerDead?.Invoke();
+                FadeController.Instance.Load("Death");
                 Debug.Log("[HealthSystem] Player Dead!");
             }
         }

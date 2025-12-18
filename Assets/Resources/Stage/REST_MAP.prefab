@@ -222,6 +222,7 @@ Transform:
   - {fileID: 8705127782791974327}
   - {fileID: 2066238946364197383}
   - {fileID: 4912001016315388609}
+  - {fileID: 2017675085283027053}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7913737959502581027
@@ -638,6 +639,68 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1001 &1626799124919323673
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8842291569429922721}
+    m_Modifications:
+    - target: {fileID: 132967579143159502, guid: 370f32aaf72b51e43a3203454448c475, type: 3}
+      propertyPath: m_Name
+      value: Empire_Pupa
+      objectReference: {fileID: 0}
+    - target: {fileID: 762152750997365876, guid: 370f32aaf72b51e43a3203454448c475, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 5.2561917
+      objectReference: {fileID: 0}
+    - target: {fileID: 762152750997365876, guid: 370f32aaf72b51e43a3203454448c475, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.5000041
+      objectReference: {fileID: 0}
+    - target: {fileID: 762152750997365876, guid: 370f32aaf72b51e43a3203454448c475, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.4113165
+      objectReference: {fileID: 0}
+    - target: {fileID: 762152750997365876, guid: 370f32aaf72b51e43a3203454448c475, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 762152750997365876, guid: 370f32aaf72b51e43a3203454448c475, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 762152750997365876, guid: 370f32aaf72b51e43a3203454448c475, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 762152750997365876, guid: 370f32aaf72b51e43a3203454448c475, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 762152750997365876, guid: 370f32aaf72b51e43a3203454448c475, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 762152750997365876, guid: 370f32aaf72b51e43a3203454448c475, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 762152750997365876, guid: 370f32aaf72b51e43a3203454448c475, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 370f32aaf72b51e43a3203454448c475, type: 3}
+--- !u!4 &2017675085283027053 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 762152750997365876, guid: 370f32aaf72b51e43a3203454448c475, type: 3}
+  m_PrefabInstance: {fileID: 1626799124919323673}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3166995549443038485
 PrefabInstance:
   m_ObjectHideFlags: 0

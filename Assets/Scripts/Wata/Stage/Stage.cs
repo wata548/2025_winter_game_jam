@@ -11,8 +11,14 @@ namespace Stage {
 
         public void RemoveAllEnemies() {
             foreach (var enemy in _enemies) {
-                Destroy(enemy);
+                Destroy(enemy.gameObject);
             }
+        }
+
+        public void Refresh() {
+            _enemies = GameObject.FindGameObjectsWithTag("Enemy")
+                .Where(obj => obj != null && obj.TryGetComponent<Enemy>(out _))
+                .Select(obj => obj.GetComponent<Enemy>());  
         }
         
         public bool ExistMonster {
@@ -25,9 +31,7 @@ namespace Stage {
         }
 
         private void Awake() {
-            _enemies = GameObject.FindGameObjectsWithTag("Enemy")
-                .Where(obj => obj != null && obj.TryGetComponent<Enemy>(out _))
-                .Select(obj => obj.GetComponent<Enemy>());
+            Refresh();
             GameObject.FindWithTag("Player").transform.position = _playerSpawn.position;
         }
     }

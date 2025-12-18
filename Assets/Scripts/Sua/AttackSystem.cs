@@ -241,7 +241,7 @@ namespace Game.Player.Combat
                 vfxAttack.PlayHitEffect(pTarget.transform.position);
             }
 
-            pTarget.GetComponent<Enemy>().GetDamage(damage);
+            pTarget.GetComponent<Enemy>()?.GetDamage(damage);
         }
 
         private void UpdateAttackCooldowns()
