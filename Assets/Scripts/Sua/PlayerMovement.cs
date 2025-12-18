@@ -153,6 +153,7 @@ namespace Game.Player.Movement
         public float DashCooldownProgress => 1f - Mathf.Clamp01(m_dashCooldownTimer / m_dashCooldown);
         public bool IsGrounded => IsGround;
         public float GetCurrentMoveInput() => m_currentMoveInput;
+        public Vector3 GetVelocity() => _rigid.linearVelocity;
 
         private void MoveProcess()
         {
@@ -200,5 +201,7 @@ namespace Game.Player.Movement
             MoveProcess();
             OffsetXMovement();
         }
+
+
     }
 }
