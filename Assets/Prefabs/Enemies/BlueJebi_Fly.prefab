@@ -151,7 +151,7 @@ MonoBehaviour:
   _onAir: 0.2
   _wait: 0.2
   _stormTerm: 0.4
-  _wind: {fileID: -3414553849195771027, guid: 8091b9095db22184187b342237a5c0d0, type: 3}
+  _wind: {fileID: -7327499531741252324, guid: 10c4b75ce4b43ea438f48fa6878dc139, type: 3}
 --- !u!54 &3784227691454072383
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -274,7 +274,7 @@ MonoBehaviour:
   _animator: {fileID: 1482509130209072162}
   _speed: 12
   _wait: 0.8
-  _wind: {fileID: -3414553849195771027, guid: 8091b9095db22184187b342237a5c0d0, type: 3}
+  _wind: {fileID: -7327499531741252324, guid: 10c4b75ce4b43ea438f48fa6878dc139, type: 3}
   <Term>k__BackingField: 5
 --- !u!114 &2600490794325566419
 MonoBehaviour:

@@ -157,7 +157,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8445385396610043169}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 100
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -219,7 +219,7 @@ MonoBehaviour:
   <SpecialAttackMotion>k__BackingField: {fileID: 0}
   <GivePoisonStack>k__BackingField: 4
   <Power>k__BackingField: 1
-  _droopPeelCnt: 0
+  _droopPeelCnt: 1
   _peel: {fileID: 1685144131416740948, guid: 339000f0cdcd4a940a2d5aa4b3ecd5a1, type: 3}
 --- !u!114 &3398040319838096001
 MonoBehaviour:

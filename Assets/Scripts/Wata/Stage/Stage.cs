@@ -21,7 +21,7 @@ namespace Stage {
                 .Select(obj => obj.GetComponent<Enemy>());  
         }
         
-        public bool ExistMonster {
+        public bool ExistEnemy {
             get {
                 if (_enemies == null)
                     return false;
