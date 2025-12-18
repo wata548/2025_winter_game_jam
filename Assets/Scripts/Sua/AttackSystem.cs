@@ -207,7 +207,8 @@ namespace Game.Player.Combat
             AttackConfig config = m_attackConfigs[pAttackType];
             int damage = m_playerStats.AttackPower + config.m_baseDamage;
             Debug.Log($"[AttackSystem] {pTarget.name} took {damage} damage from {pAttackType}!");
-            pTarget.GetComponent<Enemy>()?.GetDamage(damage);
+            if(pTarget.TryGetComponent<Enemy>(out var enemy))
+                enemy.GetDamage(damage);
         }
 
         private void UpdateAttackCooldowns()

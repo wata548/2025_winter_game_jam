@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2337621810166847510}
   - component: {fileID: 6102300045617005319}
   - component: {fileID: 162483285539749545}
-  - component: {fileID: 1042500928348119035}
+  - component: {fileID: 1685144131416740948}
   m_Layer: 0
   m_Name: peel
   m_TagString: Untagged
@@ -141,7 +141,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1042500928348119035
+--- !u!114 &1685144131416740948
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -150,10 +150,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 3466591785988815912}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2466e33b9dfc44e4f8c5331772ce6c2f, type: 3}
+  m_Script: {fileID: 11500000, guid: c91b9563bcaa7ae448c167122bd04885, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Item.Magnet
-  m_magnetRadius: 12
-  m_moveSpeed: 7
+  m_magnetRadius: 5
+  m_moveSpeed: 15
   m_playerTag: Player
   m_itemValue: 1

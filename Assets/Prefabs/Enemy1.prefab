@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 6569857901401975203}
   - component: {fileID: 4389872563277302932}
   - component: {fileID: 5361099683270249887}
+  - component: {fileID: 4321594708317716601}
   m_Layer: 0
   m_Name: Enemy1
   m_TagString: Enemy
@@ -176,7 +177,7 @@ MonoBehaviour:
   <GivePoisonStack>k__BackingField: 0
   <Power>k__BackingField: 1
   _droopPeelCnt: 0
-  _peel: {fileID: 1042500928348119035, guid: 339000f0cdcd4a940a2d5aa4b3ecd5a1, type: 3}
+  _peel: {fileID: 1685144131416740948, guid: 339000f0cdcd4a940a2d5aa4b3ecd5a1, type: 3}
 --- !u!114 &6569857901401975203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -227,3 +228,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Entity.Enemy.Behaviour.TestBehaviour2
   <Term>k__BackingField: 5
+--- !u!114 &4321594708317716601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5697194602998694123}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0e97dc9bd304b81b29b657be1d4c47e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Entity.Enemy.EnemyAnimation
+  _animator: {fileID: 0}

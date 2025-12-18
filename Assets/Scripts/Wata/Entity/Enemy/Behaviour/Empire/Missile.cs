@@ -35,6 +35,7 @@ namespace Entity.Enemy.Behaviour.Empire {
             _rigid = GetComponent<Rigidbody>();
             _rigid.useGravity = false;
             _rigid.linearVelocity = transform.forward * _speed;
+            transform.position += transform.forward * 0.5f;
         }
     }
 }

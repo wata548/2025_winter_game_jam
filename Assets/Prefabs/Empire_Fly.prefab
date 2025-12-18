@@ -68,6 +68,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Empire_Fly
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4172957eaf1b2e349ac2377cc5db3a07, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -95,7 +99,10 @@ PrefabInstance:
       addedObject: {fileID: 2067921710986761879}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4172957eaf1b2e349ac2377cc5db3a07, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8122811059332936490}
+      addedObject: {fileID: 6669439682566767152}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4172957eaf1b2e349ac2377cc5db3a07, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5768597063799240665}
   m_SourcePrefab: {fileID: 100100000, guid: 4172957eaf1b2e349ac2377cc5db3a07, type: 3}
 --- !u!1 &1729498255746430396 stripped
 GameObject:
@@ -191,12 +198,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Entity.Enemy.Enemy
   <Speed>k__BackingField: 5
   <MaxHp>k__BackingField: 20
-  <AttackMotion>k__BackingField: {fileID: 0}
-  <SpecialAttackMotion>k__BackingField: {fileID: 0}
+  <AttackMotion>k__BackingField: {fileID: 6669439682566767152}
+  <SpecialAttackMotion>k__BackingField: {fileID: 5768597063799240665}
   <GivePoisonStack>k__BackingField: 5
   <Power>k__BackingField: 1
   _droopPeelCnt: 0
-  _peel: {fileID: 1042500928348119035, guid: 339000f0cdcd4a940a2d5aa4b3ecd5a1, type: 3}
+  _peel: {fileID: 1685144131416740948, guid: 339000f0cdcd4a940a2d5aa4b3ecd5a1, type: 3}
 --- !u!114 &1429026046352933354
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -218,6 +225,8 @@ MonoBehaviour:
     <StateLogic>k__BackingField: {fileID: 11400000, guid: fe15b752a81944749a1c2185eaca8061, type: 2}
   - <State>k__BackingField: 3
     <StateLogic>k__BackingField: {fileID: 11400000, guid: 5144129df4b333f47b21054bc88d89d5, type: 2}
+  - <State>k__BackingField: 4
+    <StateLogic>k__BackingField: {fileID: 11400000, guid: f25409805b18eda4c89d4a70821a7fde, type: 2}
   <State>k__BackingField: 0
   _aggro: {fileID: 11400000, guid: 4633b596520ad874e86a7537d551c676, type: 2}
 --- !u!95 &2067921710986761879
@@ -242,7 +251,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &8122811059332936490
+--- !u!114 &6669439682566767152
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -251,11 +260,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 1729498255746430396}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a234b69df8148c9bfdac63ecfc02d5d, type: 3}
+  m_Script: {fileID: 11500000, guid: 60ae91c8ccaa48f8912324bdb8ee9874, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Entity.Enemy.Behaviour.Animation
+  m_EditorClassIdentifier: Assembly-CSharp::Entity.Enemy.Behaviour.Empire.Attack
   _afterDelay: 1.5
   _beforeDelay: 0
   _animator: {fileID: 2067921710986761879}
   _targetAnimation: Attack
   _middle: 0.5
+  _missile: {fileID: 5664758379382951568, guid: 15a2782acac02bc439e87e3451120ac5, type: 3}
+--- !u!114 &5768597063799240665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1729498255746430396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f7be1de012e49d48d8db2eb0088b3d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Entity.Enemy.Behaviour.Empire.SpecialAttack
+  _afterDelay: 1
+  _beforeDelay: 0
+  _animator: {fileID: 2067921710986761879}
+  _targetAnimation: SpecialAttack
+  _middle: 0.3
+  _smoke: {fileID: 8929291468456961038, guid: fec4ac0e251ba9b45aa7607b2dd598c5, type: 3}
