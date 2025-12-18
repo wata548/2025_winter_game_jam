@@ -22,7 +22,6 @@ namespace Entity.Enemy.FSM {
            if (_isSetted || !pTarget.Movement.IsGround)
                return;
 
-           Debug.Log("Setted");
            _isSetted = true;
            var dir = pTarget.Enemy.Speed;
            var right = pTarget.Movement.IsMovable(Vector3.right * dir);
@@ -41,12 +40,10 @@ namespace Entity.Enemy.FSM {
        }
        
         public override void OnEnter(NonTargetFSM pTarget) {
-            Debug.Log("Enter Patrol");
             _isSetted = false;
             SetUp(pTarget);
         }
         public override void OnExit(NonTargetFSM pTarget) {
-            Debug.Log("Exit Patrol");
         }
 
         public override void OnUpdate(NonTargetFSM pTarget) {

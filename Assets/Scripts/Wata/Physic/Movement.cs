@@ -8,8 +8,8 @@ namespace Physic {
     public class Movement: MonoBehaviour {
         
         //==================================================||Constants 
-        protected const float JUMP_PEEK_HEIGHT = 4.5f;
-        protected const float JUMP_PEEK_INTERVAL = 0.3f;
+        protected const float JUMP_PEEK_HEIGHT = 5.5f;
+        protected const float JUMP_PEEK_INTERVAL = 0.45f;
         protected const float JUMP_SCALE = 2 * JUMP_PEEK_HEIGHT / JUMP_PEEK_INTERVAL;
         protected const float GRAVITY_SCALE = -JUMP_SCALE / JUMP_PEEK_INTERVAL;
         protected const float GROUND_CHECK_OFFSET = 0.95f;

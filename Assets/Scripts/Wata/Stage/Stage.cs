@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using Entity.Enemy;
+using Extension.Test;
+using UI;
 using UnityEngine;
 
 namespace Stage {
     public class Stage : MonoBehaviour {
-        [SerializeField] private Stage _nextStage;
         [SerializeField] private Transform _playerSpawn;
         private IEnumerable<Enemy> _enemies = null;
-
-        public bool Moveable {
+        
+        public bool ExistMonster {
             get {
                 if (_enemies == null)
                     return false;
