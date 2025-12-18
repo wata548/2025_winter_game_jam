@@ -91,7 +91,6 @@ MonoBehaviour:
   m_moveAcceleration: 25
   m_moveDeceleration: 20
   m_airAcceleration: 15
-  m_slowFallingPower: 0.5
   m_dashSpeed: 25
   m_dashDuration: 0.3
   m_dashCooldown: 0
@@ -217,8 +216,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6752b638a3e01814c8493288a63bd059, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Player.Combat.KnockbackSystem
-  m_knockbackForce: 10
-  m_knockbackUpForce: 5
+  m_knockbackForce: 30
+  m_knockbackUpForce: 10
+  m_knockbackDuration: 0.3
   m_enemyTag: Enemy
 --- !u!114 &8200179331768621055
 MonoBehaviour:
