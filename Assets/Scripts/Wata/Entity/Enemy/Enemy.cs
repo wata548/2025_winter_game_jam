@@ -1,11 +1,19 @@
 ﻿using System;
 using Entity.Enemy.Behaviour;
+using Extension.Test;
+using Game.Item;
 using Physic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Entity.Enemy {
     [RequireComponent(typeof(Movement))]
     public class Enemy: MonoBehaviour, IEntity {
+
+        [TestMethod]
+        private void Death() {
+            GetDamage(Int32.MaxValue);
+        }
         
         //==================================================||Properties 
         [field: SerializeField] public float Speed { get; private set; }
@@ -16,6 +24,16 @@ namespace Entity.Enemy {
         public bool IsDead { get; private set; } = false;
         public int PoisonStack { get; private set; }
 
+        [field: Space]
+        [Header("Damage")]
+        [field: SerializeField] public int GivePoisonStack { get; set; } = 0;
+        [field: SerializeField] public int Power { get; set; } = 1;
+
+        [FormerlySerializedAs("_droopPeel")]
+        [Space, Header("Peel")] 
+        [SerializeField] private int _droopPeelCnt;
+        [SerializeField] private Magnet _peel;
+        
         public Movement Movement { get; private set; } = null;
         //==================================================||Methods 
         public void GetDamage(int pAmount) {
@@ -46,6 +64,11 @@ namespace Entity.Enemy {
         }
         protected virtual void OnDeath() {
             Debug.Log($"{name} is dead.");
+            
+            var peel = Instantiate(_peel);
+            peel.transform.position = transform.position;
+            peel.SetItemValue(_droopPeelCnt);
+            
             Destroy(gameObject);
         }
         
@@ -54,11 +77,15 @@ namespace Entity.Enemy {
             Movement = GetComponent<Movement>();
         }
         
-       //==================================================||Unity
-       private void LateUpdate() {
-           var pos = transform.position;
-           pos.z = 0;
-           transform.position = pos;
-       }
+        //==================================================||Unity
+
+        private void OnCollisionEnter(Collision other) {
+            if (!other.transform.CompareTag("Player"))
+                return;
+
+            var entity = other.gameObject.GetComponent<IEntity>();
+            entity.GetDamage(Power);
+            entity.AddPoisonStack(GivePoisonStack);
+        }
     }
 }

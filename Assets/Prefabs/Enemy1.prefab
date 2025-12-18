@@ -173,6 +173,10 @@ MonoBehaviour:
   <MaxHp>k__BackingField: 10
   <AttackMotion>k__BackingField: {fileID: 4389872563277302932}
   <SpecialAttackMotion>k__BackingField: {fileID: 5361099683270249887}
+  <GivePoisonStack>k__BackingField: 0
+  <Power>k__BackingField: 1
+  _droopPeelCnt: 0
+  _peel: {fileID: 1042500928348119035, guid: 339000f0cdcd4a940a2d5aa4b3ecd5a1, type: 3}
 --- !u!114 &6569857901401975203
 MonoBehaviour:
   m_ObjectHideFlags: 0
