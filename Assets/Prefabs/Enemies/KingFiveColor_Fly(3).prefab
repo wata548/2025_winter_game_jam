@@ -269,7 +269,7 @@ MonoBehaviour:
   _animator: {fileID: 2782128896401064640}
   _targetAnimation: Punch
   _middle: 0.2
-  _speed: 16
+  _speed: 18
 --- !u!114 &5655715786088935851
 MonoBehaviour:
   m_ObjectHideFlags: 0

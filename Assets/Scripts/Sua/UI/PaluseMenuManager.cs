@@ -1,5 +1,6 @@
 using UnityEngine;
 using Game.Input;
+using UI;
 using UInput = UnityEngine.Input;
 
 namespace Game.UI
@@ -111,6 +112,8 @@ namespace Game.UI
             Debug.Log("[PauseMenuManager] Game resumed!");
         }
 
+        public void OpenSetting() => SettingManager.Instance.TurnOn();
+        
         private void OpenEnhancement()
         {
             if (m_enhancementPanel != null)

@@ -20311,7 +20311,7 @@ GameObject:
   - component: {fileID: 4014780428814847388}
   - component: {fileID: 4014780428814847391}
   m_Layer: 0
-  m_Name: HCFX_Energy_07
+  m_Name: Smash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

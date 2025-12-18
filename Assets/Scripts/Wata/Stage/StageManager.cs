@@ -4,6 +4,7 @@ using System.Linq;
 using Extension.Test;
 using UI;
 using UnityEngine;
+using Wata.Stage;
 using Random = UnityEngine.Random;
 
 namespace Stage {
@@ -20,6 +21,7 @@ namespace Stage {
         private int _stageCnt = 0;
         
        //==================================================||Properties 
+       public bool ExistEnemy => _curStage?.ExistEnemy ?? true;
        public static StageManager Instance { get; private set; } = null;
 
        public void Refresh() {
@@ -28,7 +30,7 @@ namespace Stage {
        
         [TestMethod]
         public void NextStage() {
-                
+            DisappearBlock.IsOn = false;       
             _stageCnt++;
             if (_stageCnt > MAX_STAGE_COUNT + 1) {
                 FadeController.Instance.Load("Clear");
@@ -38,6 +40,8 @@ namespace Stage {
                 SetStage(_bossStage);
             else
                 SetStage(_stages[Random.Range(0, _stages.Count)]);
+            DisappearBlock.IsOn = true;       
+            
         }
 
         private void SetStage(Stage pStage) {

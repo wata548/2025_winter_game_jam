@@ -219,7 +219,7 @@ MonoBehaviour:
   <SpecialAttackMotion>k__BackingField: {fileID: 0}
   <GivePoisonStack>k__BackingField: 4
   <Power>k__BackingField: 1
-  _droopPeelCnt: 0
+  _droopPeelCnt: 1
   _peel: {fileID: 1685144131416740948, guid: 339000f0cdcd4a940a2d5aa4b3ecd5a1, type: 3}
 --- !u!114 &3398040319838096001
 MonoBehaviour:
