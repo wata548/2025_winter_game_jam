@@ -16,8 +16,8 @@ namespace Game.Player.Stats
         private PlayerStats m_playerStats = null;
 
         private int m_attackEnhancementLevel = 0;
-        private int m_fallEnhancementLevel = 0;
-        private int m_healingEnhancementLevel = 0;
+        private int m_fallEnhancementLevel = 1;
+        private int m_healingEnhancementLevel = 1;
 
         private const int ATTACK_ENHANCEMENT_COST = 10;
         private const int ATTACK_ENHANCEMENT_MAX = 9;

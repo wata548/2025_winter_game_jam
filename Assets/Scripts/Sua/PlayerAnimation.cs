@@ -39,8 +39,8 @@ namespace Game.Player
         private void Update()
         {
             UpdateMovementAnimation();
-            UpdateJumpFallAnimation();
             UpdateAttackAnimation();
+            UpdateJumpFallAnimation();
         }
 
         private void UpdateMovementAnimation()
@@ -59,38 +59,48 @@ namespace Game.Player
 
             if (!m_wasInAir && m_isInAir && velocity.y > 0)
             {
-                m_animator.SetTrigger(HASH_JUMP);
-                Debug.Log("[PlayerAnimator] Jump triggered!");
+                if (!m_isAttacking)
+                {
+                    m_animator.SetTrigger(HASH_JUMP);
+                    Debug.Log("[PlayerAnimator] Jump triggered!");
+                }
             }
 
             if (m_isInAir && velocity.y < 0)
             {
-                m_animator.SetTrigger(HASH_FALL);
-                Debug.Log("[PlayerAnimator] Fall triggered!");
+                if (!m_isAttacking)
+                {
+                    m_animator.SetTrigger(HASH_FALL);
+                    Debug.Log("[PlayerAnimator] Fall triggered!");
+                }
             }
 
             if (m_wasInAir && !m_isInAir)
             {
-                m_animator.SetTrigger(HASH_LANDING);
-                Debug.Log("[PlayerAnimator] Landing triggered!");
+                if (!m_isAttacking)
+                {
+                    m_animator.SetTrigger(HASH_LANDING);
+                    Debug.Log("[PlayerAnimator] Landing triggered!");
+                }
             }
         }
 
         private void UpdateAttackAnimation()
         {
             m_wasAttacking = m_isAttacking;
-            m_isAttacking = m_attackSystem.CanAttack(Combat.AttackType.Normal) == false ||
-                           m_attackSystem.CanAttack(Combat.AttackType.Aerial) == false;
+            bool normalAttackActive = !m_attackSystem.CanAttack(Combat.AttackType.Normal);
+            bool aerialAttackActive = !m_attackSystem.CanAttack(Combat.AttackType.Aerial);
+            m_isAttacking = normalAttackActive || aerialAttackActive;
 
             if (m_isAttacking && !m_wasAttacking)
             {
-                if (m_isInAir)
+                if (aerialAttackActive)
                 {
                     m_animator.SetTrigger(HASH_AIR_ATTACK);
                     Debug.Log("[PlayerAnimator] Air Attack triggered!");
                     m_canCombo = false;
                 }
-                else
+                else if (normalAttackActive)
                 {
                     if (m_canCombo)
                     {

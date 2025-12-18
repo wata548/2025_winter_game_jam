@@ -64,6 +64,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -3713675520997518193, guid: 727572ab62483f643b5eb924c8f3b886, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4300000, guid: b350aff2b81db274385bb5905f21d11a, type: 2}
     - target: {fileID: 919132149155446097, guid: 727572ab62483f643b5eb924c8f3b886, type: 3}
       propertyPath: m_Name
       value: Player(T)
@@ -77,10 +81,10 @@ PrefabInstance:
       addedObject: {fileID: 5640286558874499442}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 727572ab62483f643b5eb924c8f3b886, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6115683388095117265}
+      addedObject: {fileID: 8968800645545457283}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 727572ab62483f643b5eb924c8f3b886, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2922985467277853629}
+      addedObject: {fileID: 6115683388095117265}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 727572ab62483f643b5eb924c8f3b886, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1325601817488704118}
@@ -157,6 +161,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &8968800645545457283
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1925021915472597444}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.2, y: 1, z: 0.2}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &6115683388095117265
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -184,29 +209,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!136 &2922985467277853629
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1925021915472597444}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.2
-  m_Height: 1
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1325601817488704118
 MonoBehaviour:
   m_ObjectHideFlags: 0
