@@ -11,8 +11,7 @@ namespace Game.Player.Stats
         public int MaxHp => m_playerStats.MaxHealth;
         public int Hp => m_currentHealth;
         public bool IsDead => m_currentHealth <= 0;
-        public int PoisonStack => m_currentPoisonStack;
-        public int CurrentHealth => m_currentHealth;
+        public int PoisonStack => m_poisonSystem.CurrentPoisonStack;
         public bool IsInvulnerable => m_isInvulnerable;
 
         //==================================================||Fields
@@ -24,7 +23,6 @@ namespace Game.Player.Stats
         private PlayerBuffSystem m_playerBuffSystem = null;
         private PoisonSystem m_poisonSystem = null;
         private int m_currentHealth = 0;
-        private int m_currentPoisonStack = 0;
         private bool m_isInvulnerable = false;
         private float m_invulnerableTimer = 0f;
 
@@ -65,7 +63,6 @@ namespace Game.Player.Stats
         {
             if (m_isInvulnerable) return;
 
-            // Def
             if (m_playerBuffSystem.CanBlockDamage())
             {
                 m_playerBuffSystem.SwitchShell3Buff();
@@ -75,7 +72,6 @@ namespace Game.Player.Stats
                 return;
             }
 
-            // Poison
             int finalDamage = pDamage;
             if (m_poisonSystem.IsPoisoned)
             {
@@ -89,7 +85,6 @@ namespace Game.Player.Stats
 
             OnHealthChanged?.Invoke(m_currentHealth);
 
-            // Shell3 check!!
             m_playerBuffSystem.OnPlayerHit();
 
             if (m_currentHealth <= 0)
@@ -108,17 +103,9 @@ namespace Game.Player.Stats
             OnHealthChanged?.Invoke(m_currentHealth);
         }
 
-        public void AddPoisonStack(int pAmount)
-        {
-            m_currentPoisonStack += pAmount;
-            OnPoisonStackChanged?.Invoke(m_currentPoisonStack);
-        }
+        public void AddPoisonStack(int pAmount) => m_poisonSystem.AddPoisonStack(pAmount);
 
-        public void RemovePoisonStack(int pAmount)
-        {
-            m_currentPoisonStack = Mathf.Max(0, m_currentPoisonStack - pAmount);
-            OnPoisonStackChanged?.Invoke(m_currentPoisonStack);
-        }
+        public void RemovePoisonStack(int pAmount) => m_poisonSystem.RemovePoisonStack(pAmount);
 
         private void UpdateInvulnerable()
         {
