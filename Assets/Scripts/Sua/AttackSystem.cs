@@ -1,7 +1,6 @@
 using UnityEngine;
 using UInput = UnityEngine.Input;
 using System.Collections.Generic;
-using System;
 using Entity.Enemy;
 using Extension.Test;
 
@@ -9,8 +8,6 @@ namespace Game.Player.Combat
 {
     public class AttackSystem : MonoBehaviour
     {
-
-        public event Action OnAttackExecuted;
 
         private Game.Player.Stats.PlayerStats m_playerStats = null;
         private Game.Player.Movement.PlayerMovement m_playerMovement = null;
@@ -115,12 +112,10 @@ namespace Game.Player.Combat
 
             m_attackCooldownTimers[attackType] = m_attackConfigs[attackType].m_cooldown;
             m_canAttack[attackType] = false;
-            OnAttackExecuted?.Invoke();
 
             return true;
         }
 
-        //==================================================||Normal Attack
         private void PerformNormalAttack(float pDirection)
         {
             m_normalAttackActive = true;
@@ -137,7 +132,6 @@ namespace Game.Player.Combat
 
             m_normalAttackTimer -= Time.deltaTime;
 
-            // ��ġ ����
             AttackConfig config = m_attackConfigs[AttackType.Normal];
             Vector3 attackDirection = m_normalAttackDirection > 0 ? Vector3.right : Vector3.left;
             Vector3 attackPos = transform.position + attackDirection * (config.m_range / 2f);
@@ -146,7 +140,6 @@ namespace Game.Player.Combat
             m_lastNormalAttackPos = attackPos;
             m_lastNormalAttackSize = attackSize;
 
-            // Hit check
             Collider[] hits = Physics.OverlapBox(
                 attackPos,
                 attackSize / 2f,
@@ -161,7 +154,6 @@ namespace Game.Player.Combat
                 }
             }
 
-            // end
             if (m_normalAttackTimer <= 0f)
             {
                 m_normalAttackActive = false;
@@ -169,7 +161,6 @@ namespace Game.Player.Combat
             }
         }
 
-        //==================================================||Aerial Attack
         private void PerformAerialAttack()
         {
             m_aerialAttackActive = true;
@@ -187,10 +178,8 @@ namespace Game.Player.Combat
 
             m_aerialAttackTimer -= Time.deltaTime;
 
-            // ��ġ����
             m_lastAerialAttackPos = transform.position;
 
-            // Hit check
             AttackConfig config = m_attackConfigs[AttackType.Aerial];
             Collider[] hits = Physics.OverlapSphere(
                 m_lastAerialAttackPos,
@@ -206,7 +195,6 @@ namespace Game.Player.Combat
                 }
             }
 
-            // end
             if (m_aerialAttackTimer <= 0f)
             {
                 m_aerialAttackActive = false;
@@ -267,7 +255,6 @@ namespace Game.Player.Combat
         {
             if (!m_showGizmo || m_gizmoDisplayTimer <= 0f) return;
 
-            // Normal ���� �� �ȴٴ� ��
             if (m_normalAttackActive && m_lastNormalAttackSize.magnitude > 0)
             {
                 Gizmos.color = Color.red;
@@ -276,7 +263,6 @@ namespace Game.Player.Combat
                 Gizmos.DrawCube(m_lastNormalAttackPos, m_lastNormalAttackSize);
             }
 
-            // ����
             if (m_aerialAttackActive && m_lastAerialAttackRadius > 0)
             {
                 Gizmos.color = Color.blue;
