@@ -79,6 +79,15 @@ namespace Physic {
             halfScale *= GROUND_CHECK_OFFSET;
             halfScale.y = GROUND_CHECKER_HEIGHT / 2;
 
+            var temp = Physics.BoxCastAll(
+                center,
+                halfScale,
+                Vector3.down,
+                Quaternion.identity,
+                -pGravity * Time.timeScale * Time.deltaTime + scale.y,
+                LayerMask.GetMask("Ground")
+            );
+            
             var contacts = Physics.BoxCastAll(
                 center,
                 halfScale,
@@ -86,7 +95,7 @@ namespace Physic {
                 Quaternion.identity,
                 -pGravity * Time.timeScale * Time.deltaTime + scale.y,
                 LayerMask.GetMask("Ground")
-            ).Where(hit => hit.point.y < transform.position.y && hit.point != Vector3.zero);
+            ).Where(hit => hit.point.y < Collider.bounds.center.y && hit.point != Vector3.zero);
             
             if (!contacts.Any())
                 return false;

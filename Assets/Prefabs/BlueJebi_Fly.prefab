@@ -209,7 +209,7 @@ MonoBehaviour:
   <GivePoisonStack>k__BackingField: 0
   <Power>k__BackingField: 1
   _droopPeelCnt: 5
-  _peel: {fileID: 1042500928348119035, guid: 339000f0cdcd4a940a2d5aa4b3ecd5a1, type: 3}
+  _peel: {fileID: 1685144131416740948, guid: 339000f0cdcd4a940a2d5aa4b3ecd5a1, type: 3}
 --- !u!114 &8357739362212415509
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -42,7 +42,7 @@ namespace Entity.Enemy {
             Hp -= pAmount;
             OnDamage(pAmount);
             
-            if (Hp < 0) {
+            if (Hp <= 0) {
                 Hp = 0;
                 IsDead = true;
                 OnDeath();
