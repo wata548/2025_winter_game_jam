@@ -1,3 +1,4 @@
+using Extension.Test;
 using Game.Player.Combat;
 using System;
 using UnityEngine;
@@ -126,5 +127,11 @@ namespace Game.Player.Stats
         public bool IsShell2BuffActive => m_shell2BuffActive;
         public float Shell2BuffRemainingTime => m_shell2BuffTimer;
         public BuffType Shell3CurrentBuff => m_shell3CurrentBuff;
+
+        [TestMethod("Test Hit")]
+        private void TestHit()
+        {
+            OnPlayerHit();
+        }
     }
 }
