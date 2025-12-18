@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Entity.Enemy;
-using Extension.Test;
-using UI;
 using UnityEngine;
 
 namespace Stage {
