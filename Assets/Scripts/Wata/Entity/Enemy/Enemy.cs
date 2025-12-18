@@ -8,6 +8,7 @@ using UnityEngine.Serialization;
 
 namespace Entity.Enemy {
     [RequireComponent(typeof(Movement))]
+    [RequireComponent(typeof(EnemyAnimation))]
     public class Enemy: MonoBehaviour, IEntity {
 
         [TestMethod]
@@ -20,6 +21,7 @@ namespace Entity.Enemy {
         [field: SerializeField] public int MaxHp { get; private set; }
         [field: SerializeField] public AttackMotion AttackMotion { get; private set; }
         [field: SerializeField] public SpecialAttackMotion SpecialAttackMotion { get; private set; }
+        public EnemyAnimation Animation { get; private set; } 
         public int Hp { get; private set; }
         public bool IsDead { get; private set; } = false;
         public int PoisonStack { get; private set; }
@@ -78,6 +80,10 @@ namespace Entity.Enemy {
         }
         
         //==================================================||Unity
+
+        private void Awake() {
+            Animation = GetComponent<EnemyAnimation>();
+        }
 
         private void OnCollisionEnter(Collision other) {
             if (!other.transform.CompareTag("Player"))

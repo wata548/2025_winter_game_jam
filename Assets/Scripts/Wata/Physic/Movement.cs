@@ -86,12 +86,13 @@ namespace Physic {
                 Quaternion.identity,
                 -pGravity * Time.timeScale * Time.deltaTime + scale.y,
                 LayerMask.GetMask("Ground")
-            ).Where(hit => hit.point.y < transform.position.y);
+            ).Where(hit => hit.point.y < transform.position.y && hit.point != Vector3.zero);
             
             if (!contacts.Any())
                 return false;
 
             pLength = contacts.Min(hit => hit.distance) - scale.y;
+            Debug.Log(pLength);
             return true;
         }
 
@@ -122,6 +123,7 @@ namespace Physic {
 
         protected virtual void Update() {
             GravityProcess();
+            Debug.Log(_rigid.linearVelocity);
         }
 
         private void OnEnable() {

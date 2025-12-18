@@ -40,10 +40,12 @@ namespace Entity.Enemy.FSM {
        }
        
         public override void OnEnter(NonTargetFSM pTarget) {
+            pTarget.Enemy.Animation.Play("Walk");
             _isSetted = false;
             SetUp(pTarget);
         }
         public override void OnExit(NonTargetFSM pTarget) {
+            pTarget.Enemy.Animation.Play("Idle");
         }
 
         public override void OnUpdate(NonTargetFSM pTarget) {

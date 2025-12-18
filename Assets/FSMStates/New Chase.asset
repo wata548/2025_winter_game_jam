@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: New Chase
   m_EditorClassIdentifier: Assembly-CSharp::Entity.Enemy.FSM.ChaseState
   _nextState: 03000000
-  _attackableDistance: 0.5
+  _attackableDistance: 2

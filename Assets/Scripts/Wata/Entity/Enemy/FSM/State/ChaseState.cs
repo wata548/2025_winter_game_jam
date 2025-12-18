@@ -12,9 +12,11 @@ namespace Entity.Enemy.FSM {
                 pTarget.ChangeState(EnemyState.Idle);
                 return;
             }
+            pTarget.Enemy.Animation.Play("Walk");
         }
 
         public override void OnExit(NonTargetFSM pTarget) {
+            pTarget.Enemy.Animation.Play("Idle");
         }
 
         public override void OnUpdate(NonTargetFSM pTarget) {

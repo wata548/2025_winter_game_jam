@@ -59,14 +59,22 @@ namespace Game.Player.Movement
             if (velocity.x == 0)
                 return;
 
-            var halfSize = new Vector3(WALL_CHECK_OFFSET, GROUND_CHECK_OFFSET, transform.localScale.z) / 2;
+            var bounds = Collider.bounds;
+            var halfSize = new Vector3(WALL_CHECK_OFFSET * bounds.size.x, GROUND_CHECK_OFFSET * bounds.size.y, bounds.size.z) / 2;
+            var temp = Physics.OverlapBox(
+                bounds.center,
+                halfSize,
+                Quaternion.identity,
+                LayerMask.GetMask("Ground")
+            );
+            
             var wall = Physics.OverlapBox(
-                transform.position,
+                bounds.center,
                 halfSize,
                 Quaternion.identity,
                 LayerMask.GetMask("Ground")
             ).Any(collider => {
-                var interval = collider.transform.position.x - transform.position.x;
+                var interval = collider.bounds.center.x - bounds.center.x;
                 if (interval == 0)
                     return false;
                 return Mathf.Sign(velocity.x) == Mathf.Sign(interval);
