@@ -1,6 +1,5 @@
 using Entity;
 using Extension.Test;
-using Game.VFX;
 using System;
 using UnityEngine;
 
@@ -20,6 +19,7 @@ namespace Game.Player.Stats
         public event Action<int> OnHealthChanged;
         public event Action OnPlayerDead;
         public event Action<int> OnPoisonStackChanged;
+        public event Action OnPlayerDamaged;
 
         private PlayerStats m_playerStats = null;
         private PlayerBuffSystem m_playerBuffSystem = null;
@@ -81,19 +81,15 @@ namespace Game.Player.Stats
             if (m_poisonSystem.IsPoisoned)
             {
                 finalDamage = Mathf.FloorToInt(pDamage * m_poisonSystem.GetDamageMultiplier());
-                Debug.Log($"[HealthSystem] Poison damage multiplier applied! {pDamage} ���� {finalDamage}");
+                Debug.Log($"[HealthSystem] Poison damage multiplier applied! {pDamage} ¡æ {finalDamage}");
             }
 
             m_currentHealth -= finalDamage;
             m_isInvulnerable = true;
             m_invulnerableTimer = m_invulnerableDuration;
 
-            VFXEffectManager.EffectType effectType = m_poisonSystem.IsPoisoned
-                ? Game.VFX.VFXEffectManager.EffectType.PoisonHit
-                : Game.VFX.VFXEffectManager.EffectType.Hit;
-            Game.VFX.VFXEffectManager.Instance.PlayEffect(effectType, transform.position);
-
             OnHealthChanged?.Invoke(m_currentHealth);
+            OnPlayerDamaged?.Invoke();
 
             // Shell3 check!!
             m_playerBuffSystem.OnPlayerHit();
@@ -102,7 +98,6 @@ namespace Game.Player.Stats
             {
                 m_currentHealth = 0;
                 OnPlayerDead?.Invoke();
-                FadeController.Instance.Load("Death");
                 Debug.Log("[HealthSystem] Player Dead!");
             }
         }
@@ -149,26 +144,6 @@ namespace Game.Player.Stats
         private void TestGetDamage5()
         {
             GetDamage(3);
-        }
-
-        [TestMethod("Test Hit VFX")]
-        private void TestHitVFX()
-        {
-            Game.VFX.VFXEffectManager.Instance.PlayEffect(
-                Game.VFX.VFXEffectManager.EffectType.Hit,
-                transform.position
-            );
-            Debug.Log("[HealthSystem] Test Hit VFX played!");
-        }
-
-        [TestMethod("Test Poison Hit VFX")]
-        private void TestPoisonHitVFX()
-        {
-            Game.VFX.VFXEffectManager.Instance.PlayEffect(
-                Game.VFX.VFXEffectManager.EffectType.PoisonHit,
-                transform.position
-            );
-            Debug.Log("[HealthSystem] Test Poison Hit VFX played!");
         }
     }
 }

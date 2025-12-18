@@ -71,13 +71,13 @@ namespace Entity.Enemy {
             peel.transform.position = transform.position;
             peel.SetItemValue(_droopPeelCnt);
 
-            // Player Thread +10 (on enemy death)
+            // Player Thread +30 (on enemy death)
             var playerObject = GameObject.FindGameObjectWithTag("Player");
             if (playerObject != null)
             {
                 var threadSystem = playerObject.GetComponent<Game.Player.Stats.ThreadSystem>();
                 if (threadSystem != null)
-                    threadSystem.AddThread(10);
+                    threadSystem.AddThread(30);
             }
 
             Destroy(gameObject);

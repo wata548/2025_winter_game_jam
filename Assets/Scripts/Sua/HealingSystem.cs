@@ -1,17 +1,17 @@
 using UnityEngine;
+using Extension.Test;
 
 namespace Game.Player.Stats
 {
     public class HealingSystem : MonoBehaviour
     {
-
         private HealthSystem m_healthSystem = null;
         private ThreadSystem m_threadSystem = null;
         private EnhancementSystem m_enhancementSystem = null;
 
         private bool m_isHealing = false;
         private float m_healTimer = 0f;
-        private int m_healCount = 0;
+        private float m_healIntervalTimer = 0f;
 
         [SerializeField] private float m_healStartDelay = 2f;
         [SerializeField] private float m_healInterval = 1f;
@@ -29,6 +29,19 @@ namespace Game.Player.Stats
             if (m_enhancementSystem == null) Debug.LogError("[HealingSystem] EnhancementSystem is missing!");
         }
 
+        private void Start()
+        {
+            m_healthSystem.OnPlayerDamaged += OnPlayerDamaged;
+        }
+
+        private void OnDestroy()
+        {
+            if (m_healthSystem != null)
+            {
+                m_healthSystem.OnPlayerDamaged -= OnPlayerDamaged;
+            }
+        }
+
         private void Update()
         {
             UpdateHealing();
@@ -41,9 +54,12 @@ namespace Game.Player.Stats
                 Debug.Log("[HealingSystem] Already at max health!");
                 return;
             }
+
+            if (m_isHealing) return;
+
             m_isHealing = true;
             m_healTimer = 0f;
-            m_healCount = 0;
+            m_healIntervalTimer = 0f;
             Debug.Log($"[HealingSystem] Started healing. HP: {m_healthSystem.Hp}/{m_healthSystem.MaxHp}");
         }
 
@@ -55,37 +71,46 @@ namespace Game.Player.Stats
             }
             m_isHealing = false;
             m_healTimer = 0f;
-            m_healCount = 0;
+            m_healIntervalTimer = 0f;
+        }
+
+        private void OnPlayerDamaged()
+        {
+            if (m_isHealing)
+            {
+                Debug.Log("[HealingSystem] Healing interrupted by damage!");
+                StopHealing();
+            }
         }
 
         private void UpdateHealing()
         {
             if (!m_isHealing) return;
 
+            if (m_healthSystem.Hp >= m_healthSystem.MaxHp)
+            {
+                StopHealing();
+                return;
+            }
+
             m_healTimer += Time.deltaTime;
 
             if (m_healTimer < m_healStartDelay)
             {
-                float waitTime = m_healStartDelay - m_healTimer;
-
-                //0.5ÃÊ ww
-                if (Mathf.FloorToInt(waitTime * 2) != Mathf.FloorToInt((waitTime + Time.deltaTime) * 2))
-                {
-                    Debug.Log($"[HealingSystem] Waiting... {waitTime:F1}s remaining");
-                }
                 return;
             }
 
-            float timeSinceStart = m_healTimer - m_healStartDelay;
-            int currentHealCount = Mathf.FloorToInt(timeSinceStart / m_healInterval);
+            float healIntervalWithEnhancement = m_healInterval * m_enhancementSystem.GetHealingSpeedMultiplier();
+            m_healIntervalTimer += Time.deltaTime;
 
-            if (currentHealCount > m_healCount)
+            if (m_healIntervalTimer >= healIntervalWithEnhancement)
             {
+                m_healIntervalTimer -= healIntervalWithEnhancement;
+
                 if (m_threadSystem.ConsumeThread(m_threadCostPerHeal))
                 {
                     m_healthSystem.GetHeal(m_healthPerHeal);
-                    m_healCount = currentHealCount;
-                    Debug.Log($"[HealingSystem] Healing! #{m_healCount} | HP: {m_healthSystem.Hp}/{m_healthSystem.MaxHp} | Thread: -{m_threadCostPerHeal}");
+                    Debug.Log($"[HealingSystem] Healed! HP: {m_healthSystem.Hp}/{m_healthSystem.MaxHp} | Thread: -{m_threadCostPerHeal}");
                 }
                 else
                 {
@@ -93,6 +118,18 @@ namespace Game.Player.Stats
                     StopHealing();
                 }
             }
+        }
+
+        [TestMethod("Test Start Healing")]
+        private void TestStartHealing()
+        {
+            StartHealing();
+        }
+
+        [TestMethod("Test Stop Healing")]
+        private void TestStopHealing()
+        {
+            StopHealing();
         }
 
         public bool IsHealing => m_isHealing;
