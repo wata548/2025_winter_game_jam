@@ -97,6 +97,7 @@ namespace Game.Player.Stats
             if (m_currentHealth <= 0)
             {
                 m_currentHealth = 0;
+                FadeController.Instance.Load("Death");
                 OnPlayerDead?.Invoke();
                 Debug.Log("[HealthSystem] Player Dead!");
             }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using Extension.Test;
+using Game.VFX;
 
 namespace Game.Player.Stats
 {
@@ -12,6 +13,7 @@ namespace Game.Player.Stats
         private bool m_isHealing = false;
         private float m_healTimer = 0f;
         private float m_healIntervalTimer = 0f;
+        private GameObject m_healingEffect = null;
 
         [SerializeField] private float m_healStartDelay = 2f;
         [SerializeField] private float m_healInterval = 1f;
@@ -60,6 +62,15 @@ namespace Game.Player.Stats
             m_isHealing = true;
             m_healTimer = 0f;
             m_healIntervalTimer = 0f;
+
+            if (m_healingEffect == null)
+            {
+                m_healingEffect = VFXEffectManager.Instance.PlayEffectFollow(
+                    VFXEffectManager.EffectType.Healing,
+                    transform
+                );
+            }
+
             Debug.Log($"[HealingSystem] Started healing. HP: {m_healthSystem.Hp}/{m_healthSystem.MaxHp}");
         }
 
@@ -72,6 +83,16 @@ namespace Game.Player.Stats
             m_isHealing = false;
             m_healTimer = 0f;
             m_healIntervalTimer = 0f;
+
+            if (m_healingEffect != null)
+            {
+                VFXEffectManager.Instance.ReturnEffect(
+                    m_healingEffect,
+                    VFXEffectManager.EffectType.Healing,
+                    1f
+                );
+                m_healingEffect = null;
+            }
         }
 
         private void OnPlayerDamaged()
