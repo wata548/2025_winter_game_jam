@@ -23,6 +23,11 @@ namespace Entity.Enemy.Behaviour.Empire {
             }
         }
 
+        private void Awake() {
+            foreach(var particle in GetComponentsInChildren<ParticleSystem>())
+                particle.Play();
+        }
+        
         private void Update() {
             _remain -= Time.deltaTime;
             if (_remain <= 0)

@@ -10,6 +10,7 @@ namespace Entity.Enemy.Behaviour.BlueBelt {
         [SerializeField] private float _onAir = 0.2f;
         [SerializeField] private float _wait = 0.4f;
         [SerializeField] private float _stormTerm = 0.4f;
+        [SerializeField] private WindStrom _wind;
         
         public override void Play() {
             IsEnd = false;
@@ -54,6 +55,14 @@ namespace Entity.Enemy.Behaviour.BlueBelt {
                 () => {
                     _animator.Play("MakeStorm", 0, 0);
                     _animator.Update(0);
+                    var obj = Instantiate(_wind);
+                    
+                    var pos = fsm.Movement.Collider.bounds.center;
+                    pos.y -= fsm.Movement.Collider.bounds.size.y / 2;
+                    var dir = Mathf.Sign((fsm.Target.transform.position - fsm.transform.position).x);
+                    pos.x += dir * _speed;
+                    
+                    obj.transform.position = pos;
                 }
             );
             
