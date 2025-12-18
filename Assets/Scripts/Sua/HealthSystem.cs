@@ -1,6 +1,7 @@
-using UnityEngine;
-using System;
 using Entity;
+using Extension.Test;
+using System;
+using UnityEngine;
 
 namespace Game.Player.Stats
 {
@@ -129,6 +130,18 @@ namespace Game.Player.Stats
                     m_isInvulnerable = false;
                 }
             }
+        }
+
+        [TestMethod("Test Damage 1")]
+        private void TestGetDamage1()
+        {
+            GetDamage(1);
+        }
+
+        [TestMethod("Test Damage 3")]
+        private void TestGetDamage5()
+        {
+            GetDamage(3);
         }
     }
 }

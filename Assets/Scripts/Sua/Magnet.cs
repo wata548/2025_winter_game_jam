@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using Game.Player.Stats;
 
 namespace Game.Item
 {
@@ -10,6 +11,7 @@ namespace Game.Item
 
         private Rigidbody m_rigid = null;
         private Collider m_collider = null;
+        private MoltSystem m_moltSystem = null;
 
         [SerializeField] private float m_magnetRadius = 5f;
         [SerializeField] private float m_moveSpeed = 15f;
@@ -32,10 +34,9 @@ namespace Game.Item
                                      RigidbodyConstraints.FreezeRotationY |
                                      RigidbodyConstraints.FreezeRotationZ;
             }
-
             if (m_collider == null)
             {
-                Debug.LogError("[MagnetScript] Collider is missing!");
+                Debug.LogError("[Magnet] Collider is missing!");
             }
         }
 
@@ -50,14 +51,14 @@ namespace Game.Item
             if (m_playerTransform != null) return;
 
             Collider[] colliders = Physics.OverlapSphere(transform.position, m_magnetRadius);
-
             foreach (Collider col in colliders)
             {
                 if (col.CompareTag(m_playerTag))
                 {
                     m_playerTransform = col.transform;
+                    m_moltSystem = col.GetComponent<MoltSystem>();
                     m_isMovingToPlayer = true;
-                    Debug.Log("[MagnetScript] Player detected! Moving towards player...");
+                    Debug.Log("[Magnet] Player detected! Moving towards player...");
                     break;
                 }
             }
@@ -81,8 +82,17 @@ namespace Game.Item
 
         private void CollectItem()
         {
+            if (m_moltSystem != null)
+            {
+                m_moltSystem.AddMolt(m_itemValue);
+                Debug.Log($"[Magnet] Item collected! Molt +{m_itemValue} ^^");
+            }
+            else
+            {
+                Debug.LogWarning("[Magnet] MoltSystem not found!");
+            }
+
             OnItemCollected?.Invoke(m_itemValue);
-            Debug.Log($"[MagnetScript] Item collected! Value: {m_itemValue}");
             Destroy(gameObject);
         }
 

@@ -36,18 +36,22 @@ namespace Game.Player.Stats
 
         public void StartHealing()
         {
-            if (m_healthSystem.Hp >= m_healthSystem.MaxHp) return;
+            if (m_healthSystem.Hp >= m_healthSystem.MaxHp)
+            {
+                Debug.Log("[HealingSystem] Already at max health!");
+                return;
+            }
             m_isHealing = true;
             m_healTimer = 0f;
             m_healCount = 0;
-            Debug.Log("[HealingSystem] Started healing");
+            Debug.Log($"[HealingSystem] Started healing. HP: {m_healthSystem.Hp}/{m_healthSystem.MaxHp}");
         }
 
         public void StopHealing()
         {
             if (m_isHealing)
             {
-                Debug.Log("[HealingSystem] Stopped healing");
+                Debug.Log($"[HealingSystem] Stopped healing. HP: {m_healthSystem.Hp}/{m_healthSystem.MaxHp}");
             }
             m_isHealing = false;
             m_healTimer = 0f;
@@ -60,23 +64,33 @@ namespace Game.Player.Stats
 
             m_healTimer += Time.deltaTime;
 
-            if (m_healTimer >= m_healStartDelay)
+            if (m_healTimer < m_healStartDelay)
             {
-                float timeSinceStart = m_healTimer - m_healStartDelay;
-                int currentHealCount = Mathf.FloorToInt(timeSinceStart / m_healInterval);
+                float waitTime = m_healStartDelay - m_healTimer;
 
-                if (currentHealCount > m_healCount)
+                //0.5ÃÊ ww
+                if (Mathf.FloorToInt(waitTime * 2) != Mathf.FloorToInt((waitTime + Time.deltaTime) * 2))
                 {
-                    if (m_threadSystem.ConsumeThread(m_threadCostPerHeal))
-                    {
-                        m_healthSystem.GetHeal(m_healthPerHeal);
-                        m_healCount = currentHealCount;
-                        Debug.Log("[HealingSystem] Healing!");
-                    }
-                    else
-                    {
-                        StopHealing();
-                    }
+                    Debug.Log($"[HealingSystem] Waiting... {waitTime:F1}s remaining");
+                }
+                return;
+            }
+
+            float timeSinceStart = m_healTimer - m_healStartDelay;
+            int currentHealCount = Mathf.FloorToInt(timeSinceStart / m_healInterval);
+
+            if (currentHealCount > m_healCount)
+            {
+                if (m_threadSystem.ConsumeThread(m_threadCostPerHeal))
+                {
+                    m_healthSystem.GetHeal(m_healthPerHeal);
+                    m_healCount = currentHealCount;
+                    Debug.Log($"[HealingSystem] Healing! #{m_healCount} | HP: {m_healthSystem.Hp}/{m_healthSystem.MaxHp} | Thread: -{m_threadCostPerHeal}");
+                }
+                else
+                {
+                    Debug.Log("[HealingSystem] Not enough thread! Stopping healing.");
+                    StopHealing();
                 }
             }
         }

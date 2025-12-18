@@ -632,6 +632,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2664790328609784862, guid: 6b441174d8925874780eeca2dd57d557, type: 3}
+      propertyPath: m_Constraints
+      value: 126
+      objectReference: {fileID: 0}
     - target: {fileID: 4389872563277302932, guid: 6b441174d8925874780eeca2dd57d557, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -658,7 +662,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8083152079277123369, guid: 6b441174d8925874780eeca2dd57d557, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.27
+      value: -5.5849752
       objectReference: {fileID: 0}
     - target: {fileID: 8083152079277123369, guid: 6b441174d8925874780eeca2dd57d557, type: 3}
       propertyPath: m_LocalPosition.z
@@ -975,6 +979,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2778416206356582153, guid: 501bb88ffac3ed947963a5587919f857, type: 3}
+      propertyPath: m_knockbackForce
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2778416206356582153, guid: 501bb88ffac3ed947963a5587919f857, type: 3}
+      propertyPath: m_knockbackUpForce
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 6257123280473501605, guid: 501bb88ffac3ed947963a5587919f857, type: 3}
       propertyPath: m_Name
       value: Player

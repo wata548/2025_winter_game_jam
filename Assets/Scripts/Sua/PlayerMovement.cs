@@ -21,7 +21,7 @@ namespace Game.Player.Movement
         [SerializeField] private float m_moveAcceleration = 25f;
         [SerializeField] private float m_moveDeceleration = 20f;
         [SerializeField] private float m_airAcceleration = 15f;
-        [SerializeField] private float m_slowFallingPower = 0.5f;
+        //[SerializeField] private float m_slowFallingPower = 0.5f;
 
         //==================================================||Fields - Dash
         [SerializeField] private float m_dashSpeed = 25f;
@@ -32,30 +32,39 @@ namespace Game.Player.Movement
         private float m_dashTimer = 0f;
         private float m_dashCooldownTimer = 0f;
         private float m_dashDirection = 1f;
-        
+
+        //==================================================||Fields - Input Block
+        private bool m_inputBlocked = false;
+
         //==================================================||Jump & Falling
-        public void Jump() {
+        public void Jump()
+        {
+            if (m_inputBlocked) return;
             base.Jump(m_jumpScale);
         }
-        public void SetActiveSlowFalling(bool pOn) {
+        public void SetActiveSlowFalling(bool pOn)
+        {
             SetActiveSlowFalling(pOn, m_gravityScale);
         }
 
         //==================================================||Movement
         public void ApplyMovement(float pDirection)
         {
+            if (m_inputBlocked) return;
+
             m_currentMoveInput = pDirection;
             if (Mathf.Abs(pDirection) > 0.01f)
             {
                 m_lastMoveDirection = Mathf.Sign(pDirection);
             }
         }
-        
-        private void OffsetXMovement() {
+
+        private void OffsetXMovement()
+        {
             var velocity = _rigid.linearVelocity;
             if (velocity.x == 0)
                 return;
-            
+
             var halfSize = new Vector3(WALL_CHECK_OFFSET, GROUND_CHECK_OFFSET, transform.localScale.z) / 2;
             var wall = Physics.OverlapBox(
                 transform.position,
@@ -77,6 +86,7 @@ namespace Game.Player.Movement
         //==================================================||Dash
         public bool TryDash()
         {
+            if (m_inputBlocked) return false;
             if (m_isDashing || m_dashCooldownTimer > 0f)
                 return false;
 
@@ -120,6 +130,22 @@ namespace Game.Player.Movement
         public void ApplyMoveSpeedMultiplier(float pMultiplier) =>
             m_maxMoveSpeed = 10f * pMultiplier;
 
+        //==================================================||Input Block
+        public void BlockInput()
+        {
+            m_inputBlocked = true;
+            m_currentMoveInput = 0f;
+            Debug.Log("[PlayerMovement] Input blocked!");
+        }
+
+        public void UnblockInput()
+        {
+            m_inputBlocked = false;
+            Debug.Log("[PlayerMovement] Input unblocked!");
+        }
+
+        public bool IsInputBlocked => m_inputBlocked;
+
         //==================================================||Properties
         public bool IsDashing => m_isDashing;
         public bool CanDash => m_dashCooldownTimer <= 0f && !m_isDashing;
@@ -155,14 +181,16 @@ namespace Game.Player.Movement
         }
 
         //==================================================||Unity
-        protected override void Awake() {
+        protected override void Awake()
+        {
             base.Awake();
             _rigid.constraints = RigidbodyConstraints.FreezeRotationX |
                                  RigidbodyConstraints.FreezeRotationY |
                                  RigidbodyConstraints.FreezeRotationZ;
         }
 
-        protected override void Update() {
+        protected override void Update()
+        {
             base.Update();
             UpdateDash();
         }
