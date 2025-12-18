@@ -6,14 +6,11 @@ namespace Game.Player.Movement
     [RequireComponent(typeof(Rigidbody))]
     public class PlayerMovement : Physic.Movement
     {
-        //==================================================||Constants 
         private const float WALL_CHECK_OFFSET = 1.1f;
 
-        //==================================================||Fields - Movement
         private float m_currentMoveInput = 0f;
         private float m_lastMoveDirection = 1f;
 
-        //==================================================||Fields - Jump & Gravity
         private float m_jumpScale = 1;
         private float m_gravityScale = 1;
 
@@ -21,9 +18,8 @@ namespace Game.Player.Movement
         [SerializeField] private float m_moveAcceleration = 25f;
         [SerializeField] private float m_moveDeceleration = 20f;
         [SerializeField] private float m_airAcceleration = 15f;
-        //[SerializeField] private float m_slowFallingPower = 0.5f;
+        [SerializeField] private float m_rotationSpeed = 10f;
 
-        //==================================================||Fields - Dash
         [SerializeField] private float m_dashSpeed = 25f;
         [SerializeField] private float m_dashDuration = 0.3f;
         [SerializeField] private float m_dashCooldown = 0.5f;
@@ -33,21 +29,19 @@ namespace Game.Player.Movement
         private float m_dashCooldownTimer = 0f;
         private float m_dashDirection = 1f;
 
-        //==================================================||Fields - Input Block
         private bool m_inputBlocked = false;
 
-        //==================================================||Jump & Falling
         public void Jump()
         {
             if (m_inputBlocked) return;
             base.Jump(m_jumpScale);
         }
+
         public void SetActiveSlowFalling(bool pOn)
         {
             SetActiveSlowFalling(pOn, m_gravityScale);
         }
 
-        //==================================================||Movement
         public void ApplyMovement(float pDirection)
         {
             if (m_inputBlocked) return;
@@ -65,14 +59,22 @@ namespace Game.Player.Movement
             if (velocity.x == 0)
                 return;
 
-            var halfSize = new Vector3(WALL_CHECK_OFFSET, GROUND_CHECK_OFFSET, transform.localScale.z) / 2;
+            var bounds = Collider.bounds;
+            var halfSize = new Vector3(WALL_CHECK_OFFSET * bounds.size.x, GROUND_CHECK_OFFSET * bounds.size.y, bounds.size.z) / 2;
+            var temp = Physics.OverlapBox(
+                bounds.center,
+                halfSize,
+                Quaternion.identity,
+                LayerMask.GetMask("Ground")
+            );
+            
             var wall = Physics.OverlapBox(
-                transform.position,
+                bounds.center,
                 halfSize,
                 Quaternion.identity,
                 LayerMask.GetMask("Ground")
             ).Any(collider => {
-                var interval = collider.transform.position.x - transform.position.x;
+                var interval = collider.bounds.center.x - bounds.center.x;
                 if (interval == 0)
                     return false;
                 return Mathf.Sign(velocity.x) == Mathf.Sign(interval);
@@ -83,7 +85,20 @@ namespace Game.Player.Movement
             _rigid.linearVelocity = velocity;
         }
 
-        //==================================================||Dash
+        private void UpdateRotation()
+        {
+            float targetRotationY = m_lastMoveDirection > 0 ? 90f : 270f;
+            float currentRotationY = transform.eulerAngles.y;
+
+            if (currentRotationY > 180f)
+            {
+                currentRotationY -= 360f;
+            }
+
+            float newRotationY = Mathf.LerpAngle(currentRotationY, targetRotationY, m_rotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Euler(0, newRotationY, 0);
+        }
+
         public bool TryDash()
         {
             if (m_inputBlocked) return false;
@@ -120,7 +135,6 @@ namespace Game.Player.Movement
             }
         }
 
-        //==================================================||Enhancement
         public void ApplyFallSpeedMultiplier(float pMultiplier) =>
             m_gravityScale = pMultiplier;
 
@@ -130,30 +144,25 @@ namespace Game.Player.Movement
         public void ApplyMoveSpeedMultiplier(float pMultiplier) =>
             m_maxMoveSpeed = 10f * pMultiplier;
 
-        //==================================================||Input Block
         public void BlockInput()
         {
             m_inputBlocked = true;
             m_currentMoveInput = 0f;
-            Debug.Log("[PlayerMovement] Input blocked!");
         }
 
         public void UnblockInput()
         {
             m_inputBlocked = false;
-            Debug.Log("[PlayerMovement] Input unblocked!");
         }
 
         public bool IsInputBlocked => m_inputBlocked;
-
-        //==================================================||Properties
         public bool IsDashing => m_isDashing;
         public bool CanDash => m_dashCooldownTimer <= 0f && !m_isDashing;
         public float DashCooldownProgress => 1f - Mathf.Clamp01(m_dashCooldownTimer / m_dashCooldown);
         public bool IsGrounded => IsGround;
         public float GetCurrentMoveInput() => m_currentMoveInput;
+        public Vector3 GetVelocity() => _rigid.linearVelocity;
 
-        //==================================================||Movement Process
         private void MoveProcess()
         {
             var velocity = _rigid.linearVelocity;
@@ -180,7 +189,6 @@ namespace Game.Player.Movement
             _rigid.linearVelocity = velocity;
         }
 
-        //==================================================||Unity
         protected override void Awake()
         {
             base.Awake();
@@ -193,6 +201,7 @@ namespace Game.Player.Movement
         {
             base.Update();
             UpdateDash();
+            UpdateRotation();
         }
 
         private void FixedUpdate()
@@ -200,5 +209,7 @@ namespace Game.Player.Movement
             MoveProcess();
             OffsetXMovement();
         }
+
+
     }
 }

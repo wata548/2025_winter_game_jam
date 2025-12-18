@@ -10,23 +10,23 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: dcc9036e1340898439de71825392158d, type: 3}
       propertyPath: m_LocalScale.x
-      value: 2.5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dcc9036e1340898439de71825392158d, type: 3}
       propertyPath: m_LocalScale.y
-      value: 2.5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dcc9036e1340898439de71825392158d, type: 3}
       propertyPath: m_LocalScale.z
-      value: 2.5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dcc9036e1340898439de71825392158d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 17.162458
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dcc9036e1340898439de71825392158d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -11.730364
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dcc9036e1340898439de71825392158d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -103,6 +103,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: dcc9036e1340898439de71825392158d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2600490794325566419}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: dcc9036e1340898439de71825392158d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8352944521703938648}
   m_SourcePrefab: {fileID: 100100000, guid: dcc9036e1340898439de71825392158d, type: 3}
 --- !u!1 &2235857665514388830 stripped
 GameObject:
@@ -206,7 +209,7 @@ MonoBehaviour:
   <GivePoisonStack>k__BackingField: 0
   <Power>k__BackingField: 1
   _droopPeelCnt: 5
-  _peel: {fileID: 1042500928348119035, guid: 339000f0cdcd4a940a2d5aa4b3ecd5a1, type: 3}
+  _peel: {fileID: 1685144131416740948, guid: 339000f0cdcd4a940a2d5aa4b3ecd5a1, type: 3}
 --- !u!114 &8357739362212415509
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,9 +271,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Entity.Enemy.Behaviour.BlueBelt.BlueBeltSpecialAttack
   _animator: {fileID: 1482509130209072162}
-  _speed: 15
+  _speed: 12
   _wait: 0.8
-  <Term>k__BackingField: 7
+  <Term>k__BackingField: 5
 --- !u!114 &2600490794325566419
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -283,3 +286,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e29f4313a1e74f3d856667fcb5518441, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Wata.XPosRemainer
+--- !u!114 &8352944521703938648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2235857665514388830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0e97dc9bd304b81b29b657be1d4c47e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Entity.Enemy.EnemyAnimation
+  _animator: {fileID: 1482509130209072162}

@@ -1,11 +1,9 @@
 using UnityEngine;
-using Extension.Test;
 
 namespace Game.Player.Combat
 {
     public class KnockbackSystem : MonoBehaviour
     {
-
         private Rigidbody m_rigid = null;
         private Game.Player.Movement.PlayerMovement m_playerMovement = null;
 
@@ -16,6 +14,7 @@ namespace Game.Player.Combat
 
         private bool m_isKnockedBack = false;
         private float m_knockbackTimer = 0f;
+        private Vector3 m_knockbackVelocity = Vector3.zero;
 
         private void Awake()
         {
@@ -42,18 +41,23 @@ namespace Game.Player.Combat
             Vector3 direction = (transform.position - pSourcePosition).normalized;
             direction.y = 0;
 
-            Vector3 knockbackForce = new Vector3(
+            m_knockbackVelocity = new Vector3(
                 direction.x * m_knockbackForce,
                 m_knockbackUpForce,
                 0
             );
 
-            m_rigid.AddForce(knockbackForce, ForceMode.Impulse);
+            m_rigid.AddForce(m_knockbackVelocity, ForceMode.Impulse);
 
             m_isKnockedBack = true;
             m_knockbackTimer = m_knockbackDuration;
 
-            Debug.Log($"[KnockbackSystem] Knockback applied!");
+            if (m_playerMovement != null)
+            {
+                m_playerMovement.BlockInput();
+            }
+
+            Debug.Log("[KnockbackSystem] Knockback applied!");
         }
 
         private void UpdateKnockback()
@@ -65,19 +69,16 @@ namespace Game.Player.Combat
             if (m_knockbackTimer <= 0f)
             {
                 m_isKnockedBack = false;
-                Debug.Log("[KnockbackSystem] Knockback ended!");
+                var velocity = m_rigid.linearVelocity;
+                velocity.y = 0f;
+                m_rigid.linearVelocity = velocity;
 
                 if (m_playerMovement != null)
                 {
                     m_playerMovement.UnblockInput();
                 }
-            }
-            else
-            {
-                if (m_playerMovement != null)
-                {
-                    m_playerMovement.BlockInput();
-                }
+
+                Debug.Log("[KnockbackSystem] Knockback ended!");
             }
         }
 
@@ -85,90 +86,32 @@ namespace Game.Player.Combat
         {
             if (m_isKnockedBack) return;
 
-            Debug.Log($"[KnockbackSystem] Collision with {pCollision.gameObject.name}!");
-
             if (pCollision.gameObject.CompareTag(m_enemyTag))
             {
-                Debug.Log("[KnockbackSystem] Enemy detected! Applying knockback!");
+                Debug.Log($"[KnockbackSystem] Collision with {pCollision.gameObject.name}!");
                 ApplyKnockback(pCollision.transform.position);
             }
         }
 
-        [TestMethod("Test Knockback Right")]
-        private void TestKnockbackRight()
+        private void OnCollisionStay(Collision pCollision)
         {
-            m_rigid.AddForce(new Vector3(m_knockbackForce, m_knockbackUpForce, 0), ForceMode.Impulse);
-            m_isKnockedBack = true;
-            m_knockbackTimer = m_knockbackDuration;
+            if (!m_isKnockedBack) return;
+
+            int groundLayer = LayerMask.NameToLayer("Ground");
+            if (pCollision.gameObject.layer == groundLayer)
+            {
+                m_isKnockedBack = false;
+                var velocity = m_rigid.linearVelocity;
+                velocity.y = 0f;
+                m_rigid.linearVelocity = velocity;
+
+                if (m_playerMovement != null)
+                {
+                    m_playerMovement.UnblockInput();
+                }
+
+                Debug.Log("[KnockbackSystem] Hit ground during knockback!");
+            }
         }
-
-        [TestMethod("Test Knockback Left")]
-        private void TestKnockbackLeft()
-        {
-            m_rigid.AddForce(new Vector3(-m_knockbackForce, m_knockbackUpForce, 0), ForceMode.Impulse);
-            m_isKnockedBack = true;
-            m_knockbackTimer = m_knockbackDuration;
-        }
-
-        public bool IsKnockedBack => m_isKnockedBack;
-
-        //private void ApplyKnockback(Vector3 pSourcePosition)
-        //{
-        //    Vector3 direction = (transform.position - pSourcePosition).normalized;
-        //    direction.y = 0;
-
-        //    m_knockbackVelocity = new Vector3(
-        //        direction.x * m_knockbackForce,
-        //        m_knockbackUpForce,
-        //        0
-        //    );
-
-        //    m_isKnockedBack = true;
-        //    m_knockbackTimer = m_knockbackDuration;
-
-        //    Debug.Log($"[KnockbackSystem] Knockback applied! Duration: {m_knockbackDuration}s");
-        //}
-
-        //private void UpdateKnockback()
-        //{
-        //    if (!m_isKnockedBack) return;
-
-        //    m_knockbackTimer -= Time.deltaTime;
-        //    float elapsedTime = m_knockbackDuration - m_knockbackTimer;
-
-        //    if (m_knockbackTimer > 0f)
-        //    {
-        //        var velocity = m_rigid.linearVelocity;
-
-        //        velocity.x = m_knockbackVelocity.x;
-
-        //        if (elapsedTime < 0.1f)
-        //        {
-        //            velocity.y = m_knockbackVelocity.y * (1f - elapsedTime / 0.1f);
-        //        }
-        //        else
-        //        {
-        //            float fallTime = elapsedTime - 0.1f;
-        //            velocity.y = -9.8f * fallTime;
-        //        }
-
-        //        m_rigid.linearVelocity = velocity;
-
-        //        if (m_playerMovement != null)
-        //        {
-        //            m_playerMovement.BlockInput();
-        //        }
-        //    }
-        //    else
-        //    {
-        //        m_isKnockedBack = false;
-        //        Debug.Log("[KnockbackSystem] Knockback ended!");
-
-        //        if (m_playerMovement != null)
-        //        {
-        //            m_playerMovement.UnblockInput();
-        //        }
-        //    }
-        //}
     }
 }

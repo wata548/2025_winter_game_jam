@@ -20,7 +20,6 @@ namespace UI {
                     break;
 
                 color.a += Time.deltaTime * sum / pDuration;
-                Debug.Log(color.a);
                 _background.color = color;
                 yield return null;
             }

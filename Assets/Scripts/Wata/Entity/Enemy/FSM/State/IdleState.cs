@@ -15,6 +15,7 @@ namespace Entity.Enemy.FSM {
         
         //==================================================||Methods 
         public override void OnEnter(NonTargetFSM pTarget) {
+            pTarget.Enemy.Animation.Play("Idle");
             _remainTime = Random.Range(_minIdleTime, _maxIdleTime);
         }
 
