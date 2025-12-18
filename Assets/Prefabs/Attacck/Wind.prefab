@@ -24582,7 +24582,7 @@ GameObject:
   - component: {fileID: -159903991240382915}
   - component: {fileID: -3414553849195771027}
   m_Layer: 0
-  m_Name: HEAL
+  m_Name: Wind
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
