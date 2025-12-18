@@ -26,6 +26,10 @@ namespace Stage {
         public void NextStage() {
                 
             _stageCnt++;
+            if (_stageCnt > MAX_STAGE_COUNT + 1) {
+                FadeController.Instance.Load("Ending");
+                return;
+            }
             if(_stageCnt == MAX_STAGE_COUNT + 1)
                 SetStage(_bossStage);
             else

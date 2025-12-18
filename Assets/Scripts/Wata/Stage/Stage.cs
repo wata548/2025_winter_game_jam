@@ -26,6 +26,7 @@ namespace Stage {
 
         private void Awake() {
             _enemies = GameObject.FindGameObjectsWithTag("Enemy")
+                .Where(obj => obj != null && obj.TryGetComponent<Enemy>(out _))
                 .Select(obj => obj.GetComponent<Enemy>());
             GameObject.FindWithTag("Player").transform.position = _playerSpawn.position;
         }
