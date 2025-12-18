@@ -5,20 +5,17 @@ using System.Collections;
 
 public class FadeController : MonoBehaviour
 {
-    public Image fadeImage;
-    public float fadeDuration = 1f;
-    public string sceneToLoad = "SecondScene";
+    [SerializeField] Image fadeImage;
+    [SerializeField] private float fadeDuration = 1f;
 
-    private static FadeController instance;
+    public static FadeController Instance { get; private set; } = null;
 
-    void Awake()
-    {
-        if (instance == null)
+    void Awake() {
+        if (Instance == null)
         {
-            instance = this;
+            Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            // ÆäÀÌµå ÀÌ¹ÌÁö°¡ ÀÖ´Â Äµ¹ö½ºµµ ÇÔ²² À¯Áö
             if (fadeImage != null)
                 DontDestroyOnLoad(fadeImage.gameObject.transform.parent.gameObject);
         }
@@ -30,6 +27,10 @@ public class FadeController : MonoBehaviour
         
     }
 
+    public void Load(string scene) {
+        StartCoroutine(LoadScene(scene));
+    }
+    
     private IEnumerator FadeIn()
     {
         Color tempColor = fadeImage.color;
@@ -44,7 +45,7 @@ public class FadeController : MonoBehaviour
         }
     }
 
-    public IEnumerator FadeOutAndLoadScene(string newScene)
+    private IEnumerator LoadScene(string newScene)
     {
         Color tempColor = fadeImage.color;
         tempColor.a = 0f;
@@ -66,12 +67,7 @@ public class FadeController : MonoBehaviour
         }
         task.allowSceneActivation = true;
 
-        // ¾À ÀüÈ¯ ÈÄ ´Ù½Ã FadeIn È£Ãâ
+        // ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ ï¿½Ù½ï¿½ FadeIn È£ï¿½ï¿½
         StartCoroutine(FadeIn());
-    }
-
-    public void OnClickStart()
-    {
-        StartCoroutine(FadeOutAndLoadScene(sceneToLoad));
     }
 }
