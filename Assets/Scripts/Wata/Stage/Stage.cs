@@ -1,12 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Entity.Enemy;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Stage {
     public class Stage : MonoBehaviour {
         [SerializeField] private Transform _playerSpawn;
         private IEnumerable<Enemy> _enemies = null;
+
+        public void RemoveAllEnemies() {
+            foreach (var enemy in _enemies) {
+                Destroy(enemy);
+            }
+        }
         
         public bool ExistMonster {
             get {

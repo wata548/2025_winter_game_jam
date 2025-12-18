@@ -36,8 +36,10 @@ namespace Stage {
             Fade.Instance.Change(1, 0.5f, () => {
 
                 Fade.Instance.Change(0, 0.4f);
-                if (_curStage != null)
+                if (_curStage != null) {
                     Destroy(_curStage.gameObject);
+                    _curStage.RemoveAllEnemies();
+                }
                 _curStage = Instantiate(pStage);
             });
         }

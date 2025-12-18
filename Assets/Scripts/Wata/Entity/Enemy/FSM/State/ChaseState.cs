@@ -42,13 +42,20 @@ namespace Entity.Enemy.FSM {
             }
             
             var length = fsm.Enemy.Speed * Time.deltaTime;
+            var temp = Physics.BoxCastAll(
+                bounds.center,
+                bounds.size * 0.49f,
+                Mathf.Sign(dist.x) * Vector3.right,
+                Quaternion.identity,
+                length
+            );
             var movable = !Physics.BoxCastAll(
                 bounds.center,
                 bounds.size * 0.49f,
                 Mathf.Sign(dist.x) * Vector3.right,
                 Quaternion.identity,
                 length
-            ).Any(hit => hit.transform != fsm.transform);
+            ).Any(hit => hit.transform != fsm.transform && (hit.transform.CompareTag("Enemy") || hit.transform.gameObject.layer == LayerMask.GetMask("Ground")));
 
             pTarget.Movement.SetHorizonPower(movable ? fsm.Enemy.Speed * Mathf.Sign(dist.x) : 0);
         }
