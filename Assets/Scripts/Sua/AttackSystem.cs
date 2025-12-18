@@ -3,6 +3,7 @@ using UInput = UnityEngine.Input;
 using System.Collections.Generic;
 using Entity.Enemy;
 using Extension.Test;
+using Game.VFX;
 
 namespace Game.Player.Combat
 {
@@ -62,6 +63,10 @@ namespace Game.Player.Combat
 
         private void InitializeAttackConfigs()
         {
+            m_attackConfigs = new Dictionary<AttackType, AttackConfig>();
+            m_canAttack = new Dictionary<AttackType, bool>();
+            m_attackCooldownTimers = new Dictionary<AttackType, float>();
+
             m_attackConfigs[AttackType.Normal] = new AttackConfig
             {
                 m_cooldown = m_normalAttackCooldown,
@@ -94,6 +99,12 @@ namespace Game.Player.Combat
 
         public bool TryAttack(float pDirection)
         {
+            if (m_playerMovement == null)
+            {
+                Debug.LogError("[AttackSystem] PlayerMovement is not initialized!");
+                return false;
+            }
+
             AttackType attackType = m_playerMovement.IsGrounded ? AttackType.Normal : AttackType.Aerial;
 
             if (!m_canAttack[attackType])
@@ -123,6 +134,15 @@ namespace Game.Player.Combat
             m_normalAttackDirection = Mathf.Abs(pDirection) > 0.01f ? pDirection : m_playerMovement.GetCurrentMoveInput();
             m_gizmoDisplayTimer = GIZMO_DISPLAY_DURATION;
 
+            Game.VFX.VFXAttack vfxAttack = GetComponent<Game.VFX.VFXAttack>();
+            if (vfxAttack != null)
+            {
+                float rotationY = transform.eulerAngles.y;
+                Vector3 attackDirection = (rotationY < 180f) ? Vector3.right : Vector3.left;
+                Vector3 attackPos = transform.position + attackDirection * (m_attackConfigs[AttackType.Normal].m_range / 2f);
+                vfxAttack.PlayNormalAttackEffect(attackPos);
+            }
+
             Debug.Log("[AttackSystem] Normal Attack!");
         }
 
@@ -133,7 +153,8 @@ namespace Game.Player.Combat
             m_normalAttackTimer -= Time.deltaTime;
 
             AttackConfig config = m_attackConfigs[AttackType.Normal];
-            Vector3 attackDirection = m_normalAttackDirection > 0 ? Vector3.right : Vector3.left;
+            float rotationY = transform.eulerAngles.y;
+            Vector3 attackDirection = (rotationY < 180f) ? Vector3.right : Vector3.left;
             Vector3 attackPos = transform.position + attackDirection * (config.m_range / 2f);
             Vector3 attackSize = new Vector3(config.m_range, config.m_radius, 1f);
 
@@ -168,6 +189,12 @@ namespace Game.Player.Combat
             m_lastAerialAttackRadius = m_attackConfigs[AttackType.Aerial].m_radius;
             m_gizmoDisplayTimer = GIZMO_DISPLAY_DURATION;
             m_aerialAttackHitColliders.Clear();
+
+            Game.VFX.VFXAttack vfxAttack = GetComponent<Game.VFX.VFXAttack>();
+            if (vfxAttack != null)
+            {
+                vfxAttack.PlayAerialAttackEffect(transform.position);
+            }
 
             Debug.Log("[AttackSystem] Aerial Attack!");
         }
@@ -207,8 +234,14 @@ namespace Game.Player.Combat
             AttackConfig config = m_attackConfigs[pAttackType];
             int damage = m_playerStats.AttackPower + config.m_baseDamage;
             Debug.Log($"[AttackSystem] {pTarget.name} took {damage} damage from {pAttackType}!");
-            if(pTarget.TryGetComponent<Enemy>(out var enemy))
-                enemy.GetDamage(damage);
+
+            Game.VFX.VFXAttack vfxAttack = GetComponent<Game.VFX.VFXAttack>();
+            if (vfxAttack != null)
+            {
+                vfxAttack.PlayHitEffect(pTarget.transform.position);
+            }
+
+            pTarget.GetComponent<Enemy>().GetDamage(damage);
         }
 
         private void UpdateAttackCooldowns()
@@ -242,6 +275,93 @@ namespace Game.Player.Combat
         private void TestNormalAttack()
         {
             TryAttack(1f);
+        }
+
+        [TestMethod("Test Aerial Attack")]
+        private void TestAerialAttack()
+        {
+            if (m_playerMovement.IsGrounded)
+            {
+                Debug.LogWarning("[AttackSystem] Must be airborne to test aerial attack!");
+                return;
+            }
+            TryAttack(0f);
+        }
+
+        [TestMethod("Test Normal Hit VFX")]
+        private void TestNormalHitVFX()
+        {
+            VFXEffectManager.Instance.PlayEffect(
+                VFXEffectManager.EffectType.Hit,
+                transform.position + Vector3.up
+            );
+            Debug.Log("[AttackSystem] Test Normal Hit VFX played!");
+        }
+
+        [TestMethod("Test Poison Hit VFX")]
+        private void TestPoisonHitVFX()
+        {
+            VFXEffectManager.Instance.PlayEffect(
+                VFXEffectManager.EffectType.PoisonHit,
+                transform.position + Vector3.up
+            );
+            Debug.Log("[AttackSystem] Test Poison Hit VFX played!");
+        }
+
+        [TestMethod("Test Normal Attack VFX")]
+        private void TestNormalAttackVFX()
+        {
+            float rotationY = transform.eulerAngles.y;
+            float yRotation = (rotationY < 180f) ? 180f : 0f;
+
+            VFXEffectManager.Instance.PlayEffect(
+                VFXEffectManager.EffectType.NormalAttack,
+                transform.position + Vector3.right,
+                Quaternion.Euler(0f, yRotation, 0f)
+            );
+            Debug.Log("[AttackSystem] Test Normal Attack VFX played!");
+        }
+
+        [TestMethod("Test Poison Attack VFX")]
+        private void TestPoisonAttackVFX()
+        {
+            float rotationY = transform.eulerAngles.y;
+            float yRotation = (rotationY < 180f) ? 180f : 0f;
+
+            VFXEffectManager.Instance.PlayEffect(
+                VFXEffectManager.EffectType.PoisonAttack,
+                transform.position + Vector3.right,
+                Quaternion.Euler(0f, yRotation, 0f)
+            );
+            Debug.Log("[AttackSystem] Test Poison Attack VFX played!");
+        }
+
+        [TestMethod("Test Aerial Attack VFX")]
+        private void TestAerialAttackVFX()
+        {
+            GameObject effect = VFXEffectManager.Instance.PlayEffectFollow(
+                VFXEffectManager.EffectType.NormalAttackAir,
+                transform
+            );
+            if (effect != null)
+            {
+                effect.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            }
+            Debug.Log("[AttackSystem] Test Aerial Attack VFX played!");
+        }
+
+        [TestMethod("Test Poison Aerial Attack VFX")]
+        private void TestPoisonAerialAttackVFX()
+        {
+            GameObject effect = VFXEffectManager.Instance.PlayEffectFollow(
+                VFXEffectManager.EffectType.PoisonAttackAir,
+                transform
+            );
+            if (effect != null)
+            {
+                effect.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            }
+            Debug.Log("[AttackSystem] Test Poison Aerial Attack VFX played!");
         }
 
         public bool CanAttack(AttackType pAttackType) => m_canAttack[pAttackType];

@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1277122250249291469
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4262051866639321699}
+  - component: {fileID: 4453469894028440351}
+  m_Layer: 0
+  m_Name: VFXEffectManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4262051866639321699
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1277122250249291469}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -5.53379, y: -6.09, z: -4.06422}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4453469894028440351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1277122250249291469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53d2e07ebc7d1f94c810a69c07407578, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.VFX.VFXEffectManager
+  m_effectDatabase:
+  - m_effectType: 0
+    m_effectPrefab: {fileID: 8387704630402531817, guid: a3cc422b6084975408cb0df35587739b, type: 3}
+    m_poolSize: 4
+  - m_effectType: 1
+    m_effectPrefab: {fileID: 879681129677348344, guid: bf880dde2e766e64394cdd79830114cd, type: 3}
+    m_poolSize: 4
+  - m_effectType: 2
+    m_effectPrefab: {fileID: 2130886721214187485, guid: 14b9e0bcf0f83214281a12e5dfc16857, type: 3}
+    m_poolSize: 4
+  - m_effectType: 2
+    m_effectPrefab: {fileID: 6696532523386680329, guid: 2e6d7ab7ebdb9d84ea69f0b0d3dacb9f, type: 3}
+    m_poolSize: 4
+  - m_effectType: 3
+    m_effectPrefab: {fileID: 6183327839257495365, guid: ccd031b208c5b944c9094c1c436d810f, type: 3}
+    m_poolSize: 4
+  - m_effectType: 4
+    m_effectPrefab: {fileID: 8474987916053213710, guid: 334931f748d2b294993bab71a87aaf6f, type: 3}
+    m_poolSize: 4
+  - m_effectType: 5
+    m_effectPrefab: {fileID: 1475654321120902287, guid: dcf00ce860b3c6146b503d3b0974bd3c, type: 3}
+    m_poolSize: 4
+  - m_effectType: 6
+    m_effectPrefab: {fileID: 3567140078495763098, guid: ace180373ac748d4b954df60cda8d1c7, type: 3}
+    m_poolSize: 0
+  - m_effectType: 7
+    m_effectPrefab: {fileID: 230651131596242121, guid: 3f32baf9c1503b445917c96fc7d70ee8, type: 3}
+    m_poolSize: 0
+  - m_effectType: 8
+    m_effectPrefab: {fileID: 1851482450494575749, guid: 7da05b7b026d63848a81b019f096174e, type: 3}
+    m_poolSize: 4
+  - m_effectType: 9
+    m_effectPrefab: {fileID: 7896300015608915212, guid: 1589cff6d8cfb0a4981630a50da6bf5f, type: 3}
+    m_poolSize: 4
+  - m_effectType: 10
+    m_effectPrefab: {fileID: 4219405184057084112, guid: be5a0517543fdd14187bf38cf5c2cbd1, type: 3}
+    m_poolSize: 4
