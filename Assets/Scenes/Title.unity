@@ -1571,12 +1571,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7ee448dd80ff63449186326ef9f10b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KeyboardButtonHover
-  buttons:
-  - {fileID: 1045870075}
-  - {fileID: 1055516874}
-  - {fileID: 991176204}
-  hoverScale: {x: 1.2, y: 1.2, z: 1}
-  lerpSpeed: 10
 --- !u!114 &1107160929
 MonoBehaviour:
   m_ObjectHideFlags: 0
