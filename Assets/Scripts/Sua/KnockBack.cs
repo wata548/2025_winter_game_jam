@@ -7,8 +7,8 @@ namespace Game.Player.Combat
         private Rigidbody m_rigid = null;
         private Game.Player.Movement.PlayerMovement m_playerMovement = null;
 
-        [SerializeField] private float m_knockbackForce = 12f;
-        [SerializeField] private float m_knockbackUpForce = 5f;
+        [SerializeField] private float m_knockbackForce = 30f;
+        [SerializeField] private float m_knockbackUpForce = 10f;
         [SerializeField] private float m_knockbackDuration = 0.3f;
         [SerializeField] private string m_enemyTag = "Enemy";
 
