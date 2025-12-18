@@ -88,6 +88,11 @@ namespace Game.Player.Stats
 
             if (m_shell3CurrentBuff == BuffType.Defense)
             {
+                Game.VFX.VFXEnhancement vfxEnhancement = GetComponent<Game.VFX.VFXEnhancement>();
+                if (vfxEnhancement != null)
+                {
+                    vfxEnhancement.PlayDefenseEffect();
+                }
                 Debug.Log("[PlayerBuffSystem] Defense blocked damage!");
             }
             else if (m_shell3CurrentBuff == BuffType.Offense)
@@ -100,6 +105,15 @@ namespace Game.Player.Stats
         {
             m_shell3CurrentBuff = m_shell3CurrentBuff == BuffType.Defense ? BuffType.Offense : BuffType.Defense;
             OnBuffApplied?.Invoke(m_shell3CurrentBuff);
+
+            if (m_shell3CurrentBuff == BuffType.Offense)
+            {
+                Game.VFX.VFXEnhancement vfxEnhancement = GetComponent<Game.VFX.VFXEnhancement>();
+                if (vfxEnhancement != null)
+                {
+                    vfxEnhancement.PlayOffenseBuff();
+                }
+            }
 
             string buffName = m_shell3CurrentBuff == BuffType.Defense ? "방어" : "공격";
             Debug.Log($"[PlayerBuffSystem] Shell3 switched to {buffName}!");

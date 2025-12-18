@@ -1,5 +1,6 @@
 using Entity;
 using Extension.Test;
+using Game.VFX;
 using System;
 using UnityEngine;
 
@@ -11,7 +12,8 @@ namespace Game.Player.Stats
         public int MaxHp => m_playerStats.MaxHealth;
         public int Hp => m_currentHealth;
         public bool IsDead => m_currentHealth <= 0;
-        public int PoisonStack => m_poisonSystem.CurrentPoisonStack;
+        public int PoisonStack => m_currentPoisonStack;
+        public int CurrentHealth => m_currentHealth;
         public bool IsInvulnerable => m_isInvulnerable;
 
         //==================================================||Fields
@@ -23,6 +25,7 @@ namespace Game.Player.Stats
         private PlayerBuffSystem m_playerBuffSystem = null;
         private PoisonSystem m_poisonSystem = null;
         private int m_currentHealth = 0;
+        private int m_currentPoisonStack = 0;
         private bool m_isInvulnerable = false;
         private float m_invulnerableTimer = 0f;
 
@@ -63,6 +66,7 @@ namespace Game.Player.Stats
         {
             if (m_isInvulnerable) return;
 
+            // Def
             if (m_playerBuffSystem.CanBlockDamage())
             {
                 m_playerBuffSystem.SwitchShell3Buff();
@@ -72,19 +76,26 @@ namespace Game.Player.Stats
                 return;
             }
 
+            // Poison
             int finalDamage = pDamage;
             if (m_poisonSystem.IsPoisoned)
             {
                 finalDamage = Mathf.FloorToInt(pDamage * m_poisonSystem.GetDamageMultiplier());
-                Debug.Log($"[HealthSystem] Poison damage multiplier applied! {pDamage} ¡æ {finalDamage}");
+                Debug.Log($"[HealthSystem] Poison damage multiplier applied! {pDamage} ¢®©¡ {finalDamage}");
             }
 
             m_currentHealth -= finalDamage;
             m_isInvulnerable = true;
             m_invulnerableTimer = m_invulnerableDuration;
 
+            VFXEffectManager.EffectType effectType = m_poisonSystem.IsPoisoned
+                ? Game.VFX.VFXEffectManager.EffectType.PoisonHit
+                : Game.VFX.VFXEffectManager.EffectType.Hit;
+            Game.VFX.VFXEffectManager.Instance.PlayEffect(effectType, transform.position);
+
             OnHealthChanged?.Invoke(m_currentHealth);
 
+            // Shell3 check!!
             m_playerBuffSystem.OnPlayerHit();
 
             if (m_currentHealth <= 0)
@@ -103,9 +114,17 @@ namespace Game.Player.Stats
             OnHealthChanged?.Invoke(m_currentHealth);
         }
 
-        public void AddPoisonStack(int pAmount) => m_poisonSystem.AddPoisonStack(pAmount);
+        public void AddPoisonStack(int pAmount)
+        {
+            m_currentPoisonStack += pAmount;
+            OnPoisonStackChanged?.Invoke(m_currentPoisonStack);
+        }
 
-        public void RemovePoisonStack(int pAmount) => m_poisonSystem.RemovePoisonStack(pAmount);
+        public void RemovePoisonStack(int pAmount)
+        {
+            m_currentPoisonStack = Mathf.Max(0, m_currentPoisonStack - pAmount);
+            OnPoisonStackChanged?.Invoke(m_currentPoisonStack);
+        }
 
         private void UpdateInvulnerable()
         {
@@ -129,6 +148,26 @@ namespace Game.Player.Stats
         private void TestGetDamage5()
         {
             GetDamage(3);
+        }
+
+        [TestMethod("Test Hit VFX")]
+        private void TestHitVFX()
+        {
+            Game.VFX.VFXEffectManager.Instance.PlayEffect(
+                Game.VFX.VFXEffectManager.EffectType.Hit,
+                transform.position
+            );
+            Debug.Log("[HealthSystem] Test Hit VFX played!");
+        }
+
+        [TestMethod("Test Poison Hit VFX")]
+        private void TestPoisonHitVFX()
+        {
+            Game.VFX.VFXEffectManager.Instance.PlayEffect(
+                Game.VFX.VFXEffectManager.EffectType.PoisonHit,
+                transform.position
+            );
+            Debug.Log("[HealthSystem] Test Poison Hit VFX played!");
         }
     }
 }
